@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.duckduckgrid.databinding.FragmentFirstBinding
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import java.io.IOException
@@ -56,27 +57,29 @@ class FirstFragment : Fragment() {
         recyclerView.layoutManager = manager
 
 
-        getRandomDuckUri()
+        val url = getRandomDuckUrl()
         return binding.root
     }
 
-    private fun getRandomDuckUri() {
+    private fun getRandomDuckUrl(): String {
         val request = okhttp3.Request.Builder()
             .url("https://random-d.uk/api/v2/random")
             .build()
-
+        var url = ""
         client.newCall(request).enqueue(object : Callback, okhttp3.Callback {
+
             override fun onFailure(call: okhttp3.Call, e: IOException) {
             }
 
             override fun onResponse(call: okhttp3.Call, response: Response) {
-                Log.d("results: ", response.body!!.string())
-                val responseStrings = response.toString().split(",", limit = 2)
-                val imgUrl = responseStrings.get(1).split(":", limit = 2).get(1).removePrefix("\"").removeSuffix("\"")
-                Log.d("url: ",imgUrl)
+
+                url = response.body!!.string().split(":", limit = 3).get(2).removePrefix("\"").split("\"").get(0)
+                Log.d("duckUrl", url)
 
             }
+
         })
+        return url
     }
 
     override fun onDestroyView() {
