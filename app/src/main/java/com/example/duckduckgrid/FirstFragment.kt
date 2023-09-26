@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -13,22 +14,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.duckduckgrid.databinding.FragmentFirstBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import java.io.IOException
+import kotlinx.coroutines.withContext
 import java.net.URL
-import javax.security.auth.callback.Callback
 
 
 data class Item (
-    val callback: (()->Unit),
     var url: String? = null
 ) {
 
-    init {
-        GlobalScope.launch {
+    suspend fun fetchRandomUrl(callback: (()->Unit)) {
+        withContext(Dispatchers.Default) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"").get(0)
             Log.d("DuckDuck", url ?:"")
@@ -39,35 +38,44 @@ data class Item (
 }
 
 
-class FirstFragment : Fragment() {
-
-    private val client = OkHttpClient()
+class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private var _binding: FragmentFirstBinding? = null
 
     private val binding get() = _binding!!
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
 
         val callback: (() -> Unit) = {
             activity?.runOnUiThread {
-                binding.recyclerView?.adapter?.notifyDataSetChanged()
+                binding.recyclerView.adapter?.notifyDataSetChanged()
             }
         }
 
         val dataset = mutableListOf(
-            Item(callback),
-            Item(callback),
-            Item(callback),
-            Item(callback),
-            Item(callback),
-            Item(callback),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
+            Item(),
         )
+
+        dataset.forEach{ i ->
+            launch {
+                i.fetchRandomUrl(callback)
+            }
+        }
 
         val recyclerViewAdapter = RecyclerViewAdapter(dataset)
 
@@ -81,31 +89,15 @@ class FirstFragment : Fragment() {
         recyclerView.layoutManager = manager
 
         fab.setOnClickListener {
-            dataset.add(0,Item(callback))
+            val item = Item()
+            launch {
+                item.fetchRandomUrl(callback)
+            }
+
+            dataset.add(0,item)
         }
 
         return binding.root
-    }
-
-    private fun getRandomDuckUrl(): String {
-        val request = okhttp3.Request.Builder()
-            .url("https://random-d.uk/api/v2/random")
-            .build()
-        var url = ""
-        client.newCall(request).enqueue(object : Callback, okhttp3.Callback {
-
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: Response) {
-
-                url = response.body!!.string().split(":", limit = 3).get(2).removePrefix("\"").split("\"").get(0)
-                Log.d("duckUrl", url)
-
-            }
-
-        })
-        return url
     }
 
     override fun onDestroyView() {
