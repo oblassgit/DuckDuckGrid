@@ -2,6 +2,7 @@ package com.example.duckduckgrid
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -84,8 +85,10 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
         val fab: FloatingActionButton = binding.addDuckBtn
 
+        var columns = 2
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {columns = 3}
+        val manager = GridLayoutManager(activity, columns, GridLayoutManager.VERTICAL, false)
 
-        val manager = GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
         recyclerView.layoutManager = manager
 
         fab.setOnClickListener {
@@ -103,6 +106,16 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val orientation = newConfig.orientation
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
+        }
     }
 
     class RecyclerViewAdapter(private val dataSet: List<Item>) :
