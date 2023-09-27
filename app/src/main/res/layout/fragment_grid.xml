@@ -22,6 +22,7 @@
         android:src="@android:drawable/ic_menu_add"
         app:fabSize="auto"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="new Duck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
