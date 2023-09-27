@@ -10,10 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.duckduckgrid.databinding.FragmentFirstBinding
+import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,16 +22,21 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 data class Item (
-    var url: String? = null
+    var url: String? = null,
+    var date: String? = null
 ) {
 
     suspend fun fetchRandomUrl(callback: (()->Unit)) {
         withContext(Dispatchers.Default) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"").get(0)
+            date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
+            Log.d("DuckDuckDate", date?:"")
             Log.d("DuckDuck", url ?:"")
 
             callback()
@@ -41,7 +47,7 @@ data class Item (
 
 class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentGridBinding? = null
 
     private val binding get() = _binding!!
 
@@ -51,7 +57,7 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentGridBinding.inflate(inflater, container, false)
 
         val callback: (() -> Unit) = {
             activity?.runOnUiThread {
@@ -100,6 +106,17 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             dataset.add(0,item)
         }
 
+        (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
+            adapter.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
+                override fun onClick(position: Int, item: Item) {
+
+                    Log.d("DuckDuck", "WOOOHOOO! " + position )
+                    findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
+
+                }
+            })
+        }
+
         return binding.root
     }
 
@@ -120,6 +137,8 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
     class RecyclerViewAdapter(private val dataSet: List<Item>) :
         RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+
+        var onClickListener: OnDuckClickListener? = null
 
         /**
          * Provide a reference to the type of views that you are using
@@ -149,15 +168,28 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             Glide.with(viewHolder.imgView.context)
                 .load(dataSet[position].url)
                 .into(viewHolder.imgView)
+            viewHolder.itemView.setOnClickListener {
+                onClickListener?.onClick(position, dataSet[position] )
+            }
+            viewHolder.imgView.setOnClickListener {
+                onClickListener?.onClick(position, dataSet[position] )
+            }
         }
 
         // Return the size of your dataset (invoked by the layout manager)
         override fun getItemCount() = dataSet.size
 
+        // A function to bind the onclickListener.
+        fun setOnDuckClickListener(onClickListener: OnDuckClickListener) {
+            this.onClickListener = onClickListener
+        }
 
-
-
-
+        // onClickListener Interface
+        interface OnDuckClickListener {
+            fun onClick(position: Int, item: Item)
+        }
     }
 
 }
+
+
