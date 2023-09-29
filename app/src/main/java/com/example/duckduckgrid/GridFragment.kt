@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.NullPointerException
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -61,7 +62,12 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
         val callback: (() -> Unit) = {
             activity?.runOnUiThread {
-                binding.recyclerView.adapter?.notifyDataSetChanged()
+                try {
+                    binding.recyclerView.adapter?.notifyDataSetChanged()
+                } catch (e: NullPointerException) {
+                    Log.d("catch", "Nullpointer catched!")
+                }
+
             }
         }
 
@@ -110,9 +116,10 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             adapter.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
                 override fun onClick(position: Int, item: Item) {
 
-                    Log.d("DuckDuck", "WOOOHOOO! " + position )
-                    findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
-
+                    if (item.url != null && item.date != null) {
+                        Log.d("DuckDuck", "WOOOHOOO! " + position )
+                        findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
+                    }
                 }
             })
         }

@@ -25,7 +25,7 @@ class SingleImageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSingleImageBinding.inflate(inflater, container, false)
         val imgUrl = args.imgUrl
@@ -33,6 +33,7 @@ class SingleImageFragment : Fragment() {
 
         Log.d("DateAndUrl", "$imgUrl $date")
         binding.dateTxt.text = date
+
         Glide.with(binding.imageView)
             .load(imgUrl)
             .into(binding.imageView)
