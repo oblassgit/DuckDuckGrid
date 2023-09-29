@@ -10,9 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.duckduckgrid.databinding.FragmentSingleImageBinding
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
+
 class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null

@@ -147,10 +147,6 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
         var onClickListener: OnDuckClickListener? = null
 
-        /**
-         * Provide a reference to the type of views that you are using
-         * (custom ViewHolder)
-         */
         class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
             val imgView: ImageView
 
