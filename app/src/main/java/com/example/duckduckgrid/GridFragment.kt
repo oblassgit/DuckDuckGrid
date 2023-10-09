@@ -1,19 +1,16 @@
 package com.example.duckduckgrid
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -21,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.NullPointerException
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -52,6 +48,19 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private val binding get() = _binding!!
 
+    private val dataset = mutableListOf(
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+        Item(),
+    )
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,22 +80,11 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             }
         }
 
-        val dataset = mutableListOf(
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-            Item(),
-        )
-
         dataset.forEach{ i ->
-            launch {
-                i.fetchRandomUrl(callback)
+            if(i.url == null) {
+                launch {
+                    i.fetchRandomUrl(callback)
+                }
             }
         }
 
@@ -139,57 +137,6 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
         } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
-        }
-    }
-
-    class RecyclerViewAdapter(private val dataSet: List<Item>) :
-        RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
-
-        var onClickListener: OnDuckClickListener? = null
-
-        class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
-            val imgView: ImageView
-
-            init {
-                // Define click listener for the ViewHolder's View
-                imgView = view.findViewById(R.id.imgView)
-            }
-
-        }
-
-        // Create new views (invoked by the layout manager)
-        override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-            // Create a new view, which defines the UI of the list item
-            val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.grid_item, viewGroup, false)
-
-            return ViewHolder(view, viewGroup.context)
-        }
-
-        // Replace the contents of a view (invoked by the layout manager)
-        override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-            Glide.with(viewHolder.imgView.context)
-                .load(dataSet[position].url)
-                .into(viewHolder.imgView)
-            viewHolder.itemView.setOnClickListener {
-                onClickListener?.onClick(position, dataSet[position] )
-            }
-            viewHolder.imgView.setOnClickListener {
-                onClickListener?.onClick(position, dataSet[position] )
-            }
-        }
-
-        // Return the size of your dataset (invoked by the layout manager)
-        override fun getItemCount() = dataSet.size
-
-        // A function to bind the onclickListener.
-        fun setOnDuckClickListener(onClickListener: OnDuckClickListener) {
-            this.onClickListener = onClickListener
-        }
-
-        // onClickListener Interface
-        interface OnDuckClickListener {
-            fun onClick(position: Int, item: Item)
         }
     }
 
