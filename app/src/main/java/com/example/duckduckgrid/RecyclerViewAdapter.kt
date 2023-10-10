@@ -5,13 +5,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class RecyclerViewAdapter(private val dataSet: List<Item>) :
-    RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+class RecyclerViewAdapter() :
+    ListAdapter<Item, RecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
+        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    var onClickListener: OnDuckClickListener? = null
+        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
+            return false // oldItem.url == newItem.url : Ask Gustavo what i should do here. My implementation doesn't work
+        }
+    }) {
+
+    private var onClickListener: OnDuckClickListener? = null
 
     class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
         val imgView: ImageView
@@ -34,19 +44,19 @@ class RecyclerViewAdapter(private val dataSet: List<Item>) :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        val item = getItem(position)
         Glide.with(viewHolder.imgView.context)
-            .load(dataSet[position].url)
+            .load(item.url)
             .into(viewHolder.imgView)
+
         viewHolder.itemView.setOnClickListener {
-            onClickListener?.onClick(position, dataSet[position] )
+            onClickListener?.onClick(position, item )
         }
         viewHolder.imgView.setOnClickListener {
-            onClickListener?.onClick(position, dataSet[position] )
+            onClickListener?.onClick(position, item )
         }
-    }
 
-    // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    }
 
     // A function to bind the onclickListener.
     fun setOnDuckClickListener(onClickListener: OnDuckClickListener) {

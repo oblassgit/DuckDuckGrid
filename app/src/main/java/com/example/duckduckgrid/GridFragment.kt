@@ -18,14 +18,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.internal.toImmutableList
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 
 data class Item (
     var url: String? = null,
-    var date: String? = null
+    var date: String? = null,
+    val id: UUID = UUID.randomUUID()
 ) {
 
     suspend fun fetchRandomUrl(callback: (()->Unit)) {
@@ -72,7 +75,10 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
         val callback: (() -> Unit) = {
             activity?.runOnUiThread {
                 try {
-                    binding.recyclerView.adapter?.notifyDataSetChanged()
+                    (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
+                        adapter.submitList(dataset.toImmutableList())
+                    }
+
                 } catch (e: NullPointerException) {
                     Log.d("catch", "Nullpointer catched!")
                 }
@@ -88,7 +94,8 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             }
         }
 
-        val recyclerViewAdapter = RecyclerViewAdapter(dataset)
+        val recyclerViewAdapter = RecyclerViewAdapter()
+        recyclerViewAdapter.submitList(dataset)
 
         val recyclerView: RecyclerView = binding.recyclerView
         recyclerView.adapter = recyclerViewAdapter
