@@ -1,6 +1,5 @@
 package com.example.duckduckgrid
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -64,7 +63,6 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
         Item(),
     )
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -115,6 +113,7 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             }
 
             dataset.add(0,item)
+            manager.scrollToPosition(0)
         }
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
@@ -137,6 +136,7 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
         _binding = null
     }
 
+    //Configuration changes when phone is rotated
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         val orientation = newConfig.orientation
