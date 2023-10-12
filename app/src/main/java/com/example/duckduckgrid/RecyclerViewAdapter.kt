@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-class RecyclerViewAdapter() :
+class RecyclerViewAdapter :
     ListAdapter<Item, RecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return false // oldItem.url == newItem.url : Ask Gustavo what i should do here. My implementation doesn't work
+            return false // oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
         }
     }) {
 
