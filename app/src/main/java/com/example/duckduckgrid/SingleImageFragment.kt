@@ -14,7 +14,7 @@ import com.example.duckduckgrid.databinding.FragmentSingleImageBinding
 class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null
-    private val args: SingleImageFragmentArgs by navArgs<SingleImageFragmentArgs>()
+    private val args: SingleImageFragmentArgs by navArgs()
 
     // This property is only valid between onCreateView and
     // onDestroyView.

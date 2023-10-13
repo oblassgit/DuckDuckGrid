@@ -23,7 +23,7 @@ data class Item (
     suspend fun fetchRandomUrl(callback: (()->Unit)) {
         withContext(Dispatchers.Default) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
-            url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"").get(0)
+            url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"")[0]
             date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
             Log.d("DuckDuckDate", date?:"")
             Log.d("DuckDuck", url ?:"")
