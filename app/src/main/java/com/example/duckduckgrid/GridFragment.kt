@@ -7,42 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.internal.toImmutableList
-import java.net.URL
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.UUID
-
-
-data class Item (
-    var url: String? = null,
-    var date: String? = null,
-    val id: UUID = UUID.randomUUID()
-) {
-
-    suspend fun fetchRandomUrl(callback: (()->Unit)) {
-        withContext(Dispatchers.Default) {
-            val res = URL("https://random-d.uk/api/v2/random").readText()
-            url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"").get(0)
-            date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
-            Log.d("DuckDuckDate", date?:"")
-            Log.d("DuckDuck", url ?:"")
-
-            callback()
-        }
-    }
-}
-
 
 class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
@@ -50,18 +22,22 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private val binding get() = _binding!!
 
-    private val dataset = mutableListOf(
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-        Item(),
-    )
+    private val viewModel: GridFragmentViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.itemList.observe(this) { itemList ->
+            try {
+                (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
+                    adapter.submitList(itemList)
+                }
+            } catch (e: NullPointerException) {
+                Log.d("catch", "Nullpointer catched!")
+            }
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,30 +46,7 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
     ): View {
         _binding = FragmentGridBinding.inflate(inflater, container, false)
 
-        val callback: (() -> Unit) = {
-            activity?.runOnUiThread {
-                try {
-                    (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
-                        adapter.submitList(dataset.toImmutableList())
-                    }
-
-                } catch (e: NullPointerException) {
-                    Log.d("catch", "Nullpointer catched!")
-                }
-
-            }
-        }
-
-        dataset.forEach{ i ->
-            if(i.url == null) {
-                launch {
-                    i.fetchRandomUrl(callback)
-                }
-            }
-        }
-
         val recyclerViewAdapter = RecyclerViewAdapter()
-        recyclerViewAdapter.submitList(dataset)
 
         val recyclerView: RecyclerView = binding.recyclerView
         recyclerView.adapter = recyclerViewAdapter
@@ -107,13 +60,7 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
         recyclerView.layoutManager = manager
 
         fab.setOnClickListener {
-            val item = Item()
-            launch {
-                item.fetchRandomUrl(callback)
-            }
-
-            dataset.add(0,item)
-            manager.scrollToPosition(0)
+            viewModel.addItem()
         }
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
@@ -127,6 +74,8 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
                 }
             })
         }
+
+        viewModel.loadItems()
 
         return binding.root
     }
@@ -148,5 +97,3 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
     }
 
 }
-
-
