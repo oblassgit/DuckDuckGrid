@@ -16,10 +16,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
-class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
+class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private var _binding: FragmentGridBinding? = null
-
     private val binding get() = _binding!!
 
     private val viewModel: GridFragmentViewModel by viewModels()
