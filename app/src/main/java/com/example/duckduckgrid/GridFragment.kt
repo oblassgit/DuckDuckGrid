@@ -16,28 +16,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
-class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
+class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private var _binding: FragmentGridBinding? = null
-
     private val binding get() = _binding!!
 
     private val viewModel: GridFragmentViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.itemList.observe(this) { itemList ->
-            try {
-                (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
-                    adapter.submitList(itemList)
-                }
-            } catch (e: NullPointerException) {
-                Log.d("catch", "Nullpointer catched!")
-            }
-        }
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,16 +47,18 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
             viewModel.addItem()
         }
 
-        (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
-            adapter.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
-                override fun onClick(position: Int, item: Item) {
+        (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
+            override fun onClick(position: Int, item: Item) {
 
-                    if (item.url != null && item.date != null) {
-                        Log.d("DuckDuck", "WOOOHOOO! " + position )
-                        findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
-                    }
+                if (item.url != null && item.date != null) {
+                    Log.d("DuckDuck", "WOOOHOOO! $position")
+                    findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
                 }
-            })
+            }
+        })
+
+        viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
+            (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
         }
 
         viewModel.loadItems()
