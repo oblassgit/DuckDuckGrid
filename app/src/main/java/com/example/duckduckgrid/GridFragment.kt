@@ -24,21 +24,6 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
 
     private val viewModel: GridFragmentViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel.itemList.observe(this) { itemList ->
-            try {
-                (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
-                    adapter.submitList(itemList)
-                }
-            } catch (e: NullPointerException) {
-                Log.d("catch", "Nullpointer catched!")
-            }
-        }
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,6 +58,10 @@ class FirstFragment : Fragment(),  CoroutineScope by MainScope() {
                     }
                 }
             })
+        }
+
+        viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
+            (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
         }
 
         viewModel.loadItems()
