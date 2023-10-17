@@ -47,17 +47,15 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
             viewModel.addItem()
         }
 
-        (binding.recyclerView.adapter as? RecyclerViewAdapter)?.let { adapter ->
-            adapter.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
-                override fun onClick(position: Int, item: Item) {
+        (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object: RecyclerViewAdapter.OnDuckClickListener {
+            override fun onClick(position: Int, item: Item) {
 
-                    if (item.url != null && item.date != null) {
-                        Log.d("DuckDuck", "WOOOHOOO! " + position )
-                        findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
-                    }
+                if (item.url != null && item.date != null) {
+                    Log.d("DuckDuck", "WOOOHOOO! $position")
+                    findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
                 }
-            })
-        }
+            }
+        })
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
             (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
