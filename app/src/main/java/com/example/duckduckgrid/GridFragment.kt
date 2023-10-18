@@ -52,7 +52,7 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
                 if (item.url != null && item.date != null) {
                     Log.d("DuckDuck", "WOOOHOOO! $position")
-                    findNavController().navigate(FirstFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
+                    findNavController().navigate(GridFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
                 }
             }
         })
