@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null
     private val args: SingleImageFragmentArgs by navArgs()
+    private val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -26,8 +28,17 @@ class SingleImageFragment : Fragment() {
     ): View {
 
         _binding = FragmentSingleImageBinding.inflate(inflater, container, false)
+
         val imgUrl = args.imgUrl
         val date = args.date
+
+        var isStarred = sharedPref?.getBoolean(imgUrl, true) ?: false
+        if (isStarred) {
+            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+        } else {
+            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+        }
+
 
         Log.d("DateAndUrl", "$imgUrl $date")
         binding.dateTxt.text = date
@@ -36,9 +47,32 @@ class SingleImageFragment : Fragment() {
             .load(imgUrl)
             .into(binding.imageView)
 
+        binding.starBtn.setOnClickListener {
+            if (isStarred) {
+                binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+                saveStarred(isStarred, imgUrl)
+                isStarred = false
+
+            } else {
+                binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+                saveStarred(isStarred, imgUrl)
+                isStarred = true
+            }
+        }
+
         return binding.root
 
     }
+
+    private fun saveStarred(isStarred: Boolean, imgUrl: String) {
+        sharedPref ?: return
+        with(sharedPref.edit()) {
+            putBoolean(imgUrl, isStarred)
+            apply()
+        }
+    }
+
+
 
 
     override fun onDestroyView() {
