@@ -20,7 +20,7 @@ class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null
     private val args: SingleImageFragmentArgs by navArgs()
-    private lateinit var sharedPref: SharedPreferences
+    private val sharedPref: SharedPreferences get() = requireActivity().getPreferences(Context.MODE_PRIVATE)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -36,10 +36,6 @@ class SingleImageFragment : Fragment() {
 
         val imgUrl = args.imgUrl
         val date = args.date
-
-        activity?.let {
-            sharedPref  = it.getPreferences(Context.MODE_PRIVATE)
-        }
 
 
         var isStarred = sharedPref.getBoolean(imgUrl, false)
@@ -82,9 +78,6 @@ class SingleImageFragment : Fragment() {
             commit()
         }
     }
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
