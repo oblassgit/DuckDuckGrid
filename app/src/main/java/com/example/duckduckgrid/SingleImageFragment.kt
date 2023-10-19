@@ -2,11 +2,14 @@ package com.example.duckduckgrid
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -23,6 +26,7 @@ class SingleImageFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,11 +59,13 @@ class SingleImageFragment : Fragment() {
 
         binding.starBtn.setOnClickListener {
             if (isStarred) {
+                view?.performHapticFeedback(HapticFeedbackConstants.REJECT)
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
                 isStarred = false
                 saveStarred(isStarred, imgUrl)
 
             } else {
+                view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
                 isStarred = true
                 saveStarred(isStarred, imgUrl)
