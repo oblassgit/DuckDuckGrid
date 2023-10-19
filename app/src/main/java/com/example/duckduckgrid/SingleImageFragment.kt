@@ -1,6 +1,7 @@
 package com.example.duckduckgrid
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +17,7 @@ class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null
     private val args: SingleImageFragmentArgs by navArgs()
-    private val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+    private lateinit var sharedPref: SharedPreferences
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -32,7 +33,12 @@ class SingleImageFragment : Fragment() {
         val imgUrl = args.imgUrl
         val date = args.date
 
-        var isStarred = sharedPref?.getBoolean(imgUrl, true) ?: false
+        activity?.let {
+            sharedPref  = it.getPreferences(Context.MODE_PRIVATE)
+        }
+
+
+        var isStarred = sharedPref.getBoolean(imgUrl, false)
         if (isStarred) {
             binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
         } else {
@@ -50,13 +56,13 @@ class SingleImageFragment : Fragment() {
         binding.starBtn.setOnClickListener {
             if (isStarred) {
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
-                saveStarred(isStarred, imgUrl)
                 isStarred = false
+                saveStarred(isStarred, imgUrl)
 
             } else {
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
-                saveStarred(isStarred, imgUrl)
                 isStarred = true
+                saveStarred(isStarred, imgUrl)
             }
         }
 
@@ -65,10 +71,10 @@ class SingleImageFragment : Fragment() {
     }
 
     private fun saveStarred(isStarred: Boolean, imgUrl: String) {
-        sharedPref ?: return
+        sharedPref
         with(sharedPref.edit()) {
             putBoolean(imgUrl, isStarred)
-            apply()
+            commit()
         }
     }
 
