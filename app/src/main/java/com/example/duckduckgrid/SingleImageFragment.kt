@@ -59,7 +59,6 @@ class SingleImageFragment : Fragment() {
 
         binding.starBtn.setOnClickListener {
             if (isStarred) {
-                view?.performHapticFeedback(HapticFeedbackConstants.REJECT)
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
                 isStarred = false
                 saveStarred(isStarred, imgUrl)
