@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -37,11 +39,7 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
         val fab: FloatingActionButton = binding.addDuckBtn
 
-        var columns = 2
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {columns = 3}
-        val manager = GridLayoutManager(activity, columns, GridLayoutManager.VERTICAL, false)
-
-        recyclerView.layoutManager = manager
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
 
         fab.setOnClickListener {
             viewModel.addItem()
@@ -70,16 +68,4 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
         super.onDestroyView()
         _binding = null
     }
-
-    //Configuration changes when phone is rotated
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        val orientation = newConfig.orientation
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            binding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
-        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            binding.recyclerView.layoutManager = GridLayoutManager(activity, 3)
-        }
-    }
-
 }
