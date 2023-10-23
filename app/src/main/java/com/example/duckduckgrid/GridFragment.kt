@@ -1,5 +1,7 @@
 package com.example.duckduckgrid
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +11,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -19,7 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 class GridFragment : Fragment(),  CoroutineScope by MainScope() {
-
     private var _binding: FragmentGridBinding? = null
     private val binding get() = _binding!!
 
@@ -50,7 +50,7 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
                 if (item.url != null && item.date != null) {
                     Log.d("DuckDuck", "WOOOHOOO! $position")
-                    findNavController().navigate(GridFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
+                    findNavController().navigate(GridFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:"", item))
                 }
             }
         })
@@ -62,6 +62,13 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
         viewModel.loadItems()
 
         return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.let {
+            viewModel.initItems(it)
+        }
     }
 
     override fun onDestroyView() {

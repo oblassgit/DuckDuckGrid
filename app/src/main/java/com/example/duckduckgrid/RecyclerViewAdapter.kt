@@ -1,6 +1,10 @@
 package com.example.duckduckgrid
 
+import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
+import android.media.Image
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +16,14 @@ import com.bumptech.glide.Glide
 
 class RecyclerViewAdapter :
     ListAdapter<Item, RecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
+
+
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return false // oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
+            return false //oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
         }
     }) {
 
@@ -25,10 +31,11 @@ class RecyclerViewAdapter :
 
     class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
         val imgView: ImageView
-
+        val starImg: ImageView
         init {
             // Define click listener for the ViewHolder's View
             imgView = view.findViewById(R.id.imgView)
+            starImg = view.findViewById(R.id.starImg)
         }
 
     }
@@ -54,6 +61,13 @@ class RecyclerViewAdapter :
         }
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item )
+        }
+        val sharedPreferences: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
+        item.checkLiked(sharedPreferences)
+        if (item.liked) {
+            viewHolder.starImg.visibility = View.VISIBLE
+        } else {
+            viewHolder.starImg.visibility = View.INVISIBLE
         }
 
     }

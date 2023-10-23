@@ -1,6 +1,12 @@
 package com.example.duckduckgrid
 
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Parcelable
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,27 +15,37 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.Serializable
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import kotlinx.parcelize.Parcelize
 
-data class Item (
+@Parcelize
+data class Item(
     var url: String? = null,
     var date: String? = null,
-    val id: UUID = UUID.randomUUID()
-) {
-
-
+    val id: UUID = UUID.randomUUID(),
+    var liked: Boolean = false
+): Parcelable  {
+    fun checkLiked(sharedPref: SharedPreferences ) {
+        this.liked = sharedPref.getBoolean(url, false)
+    }
 }
 
-class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
+class GridFragmentViewModel(application: Application) : AndroidViewModel(application),  CoroutineScope by MainScope()  {
 
     private val _itemList = MutableLiveData<MutableList<Item>>()
+
     val itemList: LiveData<MutableList<Item>>
         get() = _itemList
 
     init {
+    }
+
+    fun initItems(activity: Activity) {
+
         _itemList.value =  mutableListOf(
             Item(),
             Item(),

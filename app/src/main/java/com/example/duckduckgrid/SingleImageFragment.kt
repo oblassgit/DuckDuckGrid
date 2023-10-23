@@ -20,7 +20,7 @@ class SingleImageFragment : Fragment() {
 
     private var _binding: FragmentSingleImageBinding? = null
     private val args: SingleImageFragmentArgs by navArgs()
-    private val sharedPref: SharedPreferences get() = requireActivity().getPreferences(Context.MODE_PRIVATE)
+    private val sharedPref: SharedPreferences get() = requireActivity().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -36,13 +36,16 @@ class SingleImageFragment : Fragment() {
 
         val imgUrl = args.imgUrl
         val date = args.date
+        val item = args.item
 
 
         var isStarred = sharedPref.getBoolean(imgUrl, false)
         if (isStarred) {
             binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+            item.liked = true
         } else {
             binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+            item.liked = false
         }
 
 
@@ -58,12 +61,13 @@ class SingleImageFragment : Fragment() {
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
                 isStarred = false
                 saveStarred(isStarred, imgUrl)
-
+                item.liked = false
             } else {
                 view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
                 isStarred = true
                 saveStarred(isStarred, imgUrl)
+                item.liked = true
             }
         }
 
