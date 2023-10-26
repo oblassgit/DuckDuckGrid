@@ -44,7 +44,7 @@ class GridFragmentViewModel(application: Application) : AndroidViewModel(applica
     init {
     }
 
-    fun initItems(activity: Activity) {
+    fun initItems() {
 
         _itemList.value =  mutableListOf(
             Item(),

@@ -67,7 +67,7 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.let {
-            viewModel.initItems(it)
+            viewModel.initItems()
         }
     }
 
