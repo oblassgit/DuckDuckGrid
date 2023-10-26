@@ -1,10 +1,7 @@
 package com.example.duckduckgrid
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.media.Image
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
