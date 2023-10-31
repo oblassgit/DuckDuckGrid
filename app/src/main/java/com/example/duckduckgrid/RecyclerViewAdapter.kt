@@ -1,7 +1,6 @@
 package com.example.duckduckgrid
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,8 +58,7 @@ class RecyclerViewAdapter :
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item )
         }
-        val sharedPreferences: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
-        item.checkLiked(sharedPreferences)
+        item.checkLiked(viewHolder)
         if (item.liked) {
             viewHolder.starImg.visibility = View.VISIBLE
         } else {

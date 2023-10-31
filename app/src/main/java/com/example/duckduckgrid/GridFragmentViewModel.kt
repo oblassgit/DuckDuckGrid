@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Parcelable
 import android.util.Log
@@ -24,8 +25,9 @@ data class Item(
     val id: UUID = UUID.randomUUID(),
     var liked: Boolean = false
 ): Parcelable  {
-    fun checkLiked(sharedPref: SharedPreferences ) {
-        this.liked = sharedPref.getBoolean(url, false)
+    fun checkLiked(viewHolder: RecyclerViewAdapter.ViewHolder) {
+        val sharedPreferences: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
+        this.liked = sharedPreferences.getBoolean(url, false)
     }
 }
 
@@ -36,11 +38,7 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
     val itemList: LiveData<MutableList<Item>>
         get() = _itemList
 
-    init {
-    }
-
     fun initItems() {
-
         _itemList.value =  mutableListOf(
             Item(),
             Item(),
@@ -54,6 +52,7 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
             Item(),
         )
     }
+
 
     private suspend fun fetchRandomUrl(callback: (()->Unit), item: Item) {
         withContext(Dispatchers.Default) {
