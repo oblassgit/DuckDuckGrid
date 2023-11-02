@@ -1,6 +1,6 @@
 package com.example.duckduckgrid
 
-import android.content.res.Configuration
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 class GridFragment : Fragment(),  CoroutineScope by MainScope() {
-
     private var _binding: FragmentGridBinding? = null
     private val binding get() = _binding!!
 
@@ -38,7 +37,9 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
         val fab: FloatingActionButton = binding.addDuckBtn
 
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL).apply {
+            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+        }
 
         fab.setOnClickListener {
             viewModel.addItem()
@@ -49,7 +50,7 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
                 if (item.url != null && item.date != null) {
                     Log.d("DuckDuck", "WOOOHOOO! $position")
-                    findNavController().navigate(GridFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:""))
+                    findNavController().navigate(GridFragmentDirections.actionFirstFragmentToSecondFragment(item.url?:"",item.date?:"", item))
                 }
             }
         })
@@ -63,9 +64,17 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
         return binding.root
     }
 
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         viewModel.loadItems()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity?.let {
+            viewModel.initItems()
+        }
+
     }
 
     override fun onDestroyView() {

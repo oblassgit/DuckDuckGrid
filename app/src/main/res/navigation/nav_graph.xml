@@ -32,5 +32,8 @@
         <argument
             android:name="date"
             app:argType="string" />
+        <argument
+            android:name="item"
+            app:argType="com.example.duckduckgrid.Item" />
     </fragment>
 </navigation>
