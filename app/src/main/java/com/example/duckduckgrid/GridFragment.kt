@@ -37,7 +37,9 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
 
         val fab: FloatingActionButton = binding.addDuckBtn
 
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        recyclerView.layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL).apply {
+            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+        }
 
         fab.setOnClickListener {
             viewModel.addItem()

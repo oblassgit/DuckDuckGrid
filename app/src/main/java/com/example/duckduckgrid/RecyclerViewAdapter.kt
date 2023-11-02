@@ -58,7 +58,6 @@ class RecyclerViewAdapter :
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item )
         }
-        item.checkLiked(viewHolder)
         if (item.liked) {
             viewHolder.starImg.visibility = View.VISIBLE
         } else {

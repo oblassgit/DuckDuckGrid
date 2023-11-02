@@ -1,7 +1,5 @@
 package com.example.duckduckgrid
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -24,12 +22,7 @@ data class Item(
     var date: String? = null,
     val id: UUID = UUID.randomUUID(),
     var liked: Boolean = false
-): Parcelable  {
-    fun checkLiked(viewHolder: RecyclerViewAdapter.ViewHolder) {
-        val sharedPreferences: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
-        this.liked = sharedPreferences.getBoolean(url, false)
-    }
-}
+): Parcelable
 
 class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
 
