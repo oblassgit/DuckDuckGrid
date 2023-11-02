@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,27 +10,28 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-data class Item (
+@Parcelize
+data class Item(
     var url: String? = null,
     var date: String? = null,
-    val id: UUID = UUID.randomUUID()
-) {
-
-
-}
+    val id: UUID = UUID.randomUUID(),
+    var liked: Boolean = false
+): Parcelable
 
 class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
 
     private val _itemList = MutableLiveData<MutableList<Item>>()
+
     val itemList: LiveData<MutableList<Item>>
         get() = _itemList
 
-    init {
+    fun initItems() {
         _itemList.value =  mutableListOf(
             Item(),
             Item(),
@@ -43,6 +45,7 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
             Item(),
         )
     }
+
 
     private suspend fun fetchRandomUrl(callback: (()->Unit), item: Item) {
         withContext(Dispatchers.Default) {
