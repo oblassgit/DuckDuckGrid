@@ -1,9 +1,12 @@
 package com.example.duckduckgrid
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -27,11 +30,11 @@ class RecyclerViewAdapter :
 
     class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
         val imgView: ImageView
-        val starImg: ImageView
+        val starBtn: ImageButton
         init {
             // Define click listener for the ViewHolder's View
             imgView = view.findViewById(R.id.imgView)
-            starImg = view.findViewById(R.id.starImg)
+            starBtn = view.findViewById(R.id.starImgBtn)
         }
 
     }
@@ -47,6 +50,7 @@ class RecyclerViewAdapter :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+        val sharedPref: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
         val item = getItem(position)
         Glide.with(viewHolder.imgView.context)
             .load(item.url)
@@ -58,12 +62,29 @@ class RecyclerViewAdapter :
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item )
         }
-        if (item.liked) {
-            viewHolder.starImg.visibility = View.VISIBLE
+        var isStarred = sharedPref.getBoolean(item.url, false)
+        if (isStarred) {
+            viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
         } else {
-            viewHolder.starImg.visibility = View.INVISIBLE
+            viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
         }
+        item.liked = isStarred
+        saveStarred(isStarred, item.url, sharedPref)
 
+        viewHolder.starBtn.setOnClickListener {
+            if (isStarred) {
+                viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+                isStarred = false
+                saveStarred(isStarred, item.url, sharedPref)
+                item.liked = false
+            } else {
+                viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+                isStarred = true
+                saveStarred(isStarred, item.url, sharedPref)
+                item.liked = true
+            }
+        }
     }
 
     // A function to bind the onclickListener.
@@ -74,5 +95,13 @@ class RecyclerViewAdapter :
     // onClickListener Interface
     interface OnDuckClickListener {
         fun onClick(position: Int, item: Item)
+    }
+
+    private fun saveStarred(isStarred: Boolean, imgUrl: String?, sharedPref: SharedPreferences) {
+        sharedPref
+        with(sharedPref.edit()) {
+            putBoolean(imgUrl, isStarred)
+            commit()
+        }
     }
 }

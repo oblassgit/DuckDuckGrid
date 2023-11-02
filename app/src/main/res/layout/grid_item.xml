@@ -18,12 +18,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/starImg"
+    <ImageButton
+        android:id="@+id/starImgBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/btn_star_big_on"
+        android:backgroundTint="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="@id/imgView"
         app:layout_constraintEnd_toEndOf="@id/imgView"
-        android:visibility="invisible"/>
+        app:srcCompat="@android:drawable/btn_star_big_off" />
 </androidx.constraintlayout.widget.ConstraintLayout>
