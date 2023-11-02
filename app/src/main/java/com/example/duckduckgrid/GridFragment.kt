@@ -1,6 +1,7 @@
 package com.example.duckduckgrid
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -64,11 +65,18 @@ class GridFragment : Fragment(),  CoroutineScope by MainScope() {
         return binding.root
     }
 
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        viewModel.loadItems()
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         activity?.let {
             viewModel.initItems()
         }
+
     }
 
     override fun onDestroyView() {
