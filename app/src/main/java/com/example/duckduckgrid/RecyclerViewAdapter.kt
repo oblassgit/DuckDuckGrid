@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -12,11 +11,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.duckduckgrid.databinding.GridItemBinding
+
 
 class RecyclerViewAdapter :
     ListAdapter<Item, RecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
-
-
         override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.id == newItem.id
         }
@@ -28,13 +27,17 @@ class RecyclerViewAdapter :
 
     private var onClickListener: OnDuckClickListener? = null
 
-    class ViewHolder(view: View, val context: Context) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(binding: GridItemBinding, val context: Context) : RecyclerView.ViewHolder(binding.root) {
         val imgView: ImageView
-        val starBtn: ImageButton
+        val starBtnOff: ImageButton
+        val starBtnOn: ImageButton
+        val itemBinding: GridItemBinding
         init {
             // Define click listener for the ViewHolder's View
-            imgView = view.findViewById(R.id.imgView)
-            starBtn = view.findViewById(R.id.starImgBtn)
+            imgView = binding.imgView
+            starBtnOff = binding.starImgBtn
+            starBtnOn = binding.starImgBtnActive
+            itemBinding = binding
         }
 
     }
@@ -42,10 +45,14 @@ class RecyclerViewAdapter :
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.grid_item, viewGroup, false)
 
-        return ViewHolder(view, viewGroup.context)
+        val binding: GridItemBinding = GridItemBinding.inflate(
+            LayoutInflater.from(viewGroup.context),
+            viewGroup,
+            false
+        )
+
+        return ViewHolder(binding, viewGroup.context)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -63,28 +70,22 @@ class RecyclerViewAdapter :
             onClickListener?.onClick(position, item )
         }
         var isStarred = sharedPref.getBoolean(item.url, false)
-        if (isStarred) {
-            viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
-        } else {
-            viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
-        }
         item.liked = isStarred
-        saveStarred(isStarred, item.url, sharedPref)
+        viewHolder.itemBinding.item = item
 
-        viewHolder.starBtn.setOnClickListener {
-            if (isStarred) {
-                viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
-                isStarred = false
-                saveStarred(isStarred, item.url, sharedPref)
-                item.liked = false
-            } else {
-                viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                viewHolder.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
-                isStarred = true
-                saveStarred(isStarred, item.url, sharedPref)
-                item.liked = true
-            }
+
+        //2 onclick listeners because of switching between two buttons to achieve different button images
+        viewHolder.starBtnOff.setOnClickListener {
+            DuckRepository.toggleLiked(item, sharedPref)
+            viewHolder.itemBinding.item = item
+            viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         }
+
+        viewHolder.starBtnOn.setOnClickListener {
+            DuckRepository.toggleLiked(item, sharedPref)
+            viewHolder.itemBinding.item = item
+        }
+
     }
 
     // A function to bind the onclickListener.
@@ -95,13 +96,5 @@ class RecyclerViewAdapter :
     // onClickListener Interface
     interface OnDuckClickListener {
         fun onClick(position: Int, item: Item)
-    }
-
-    private fun saveStarred(isStarred: Boolean, imgUrl: String?, sharedPref: SharedPreferences) {
-        sharedPref
-        with(sharedPref.edit()) {
-            putBoolean(imgUrl, isStarred)
-            commit()
-        }
     }
 }

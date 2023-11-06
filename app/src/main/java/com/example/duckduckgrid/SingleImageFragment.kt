@@ -57,30 +57,20 @@ class SingleImageFragment : Fragment() {
             .into(binding.imageView)
 
         binding.starBtn.setOnClickListener {
+            DuckRepository.toggleLiked(item, sharedPref)
+            isStarred = item.liked
+            binding.starBtn.setImageResource(when (item.liked) {
+                true -> android.R.drawable.btn_star_big_on
+                false -> android.R.drawable.btn_star_big_off
+            })
             if (isStarred) {
-                binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
-                isStarred = false
-                saveStarred(isStarred, imgUrl)
-                item.liked = false
-            } else {
                 view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
-                isStarred = true
-                saveStarred(isStarred, imgUrl)
-                item.liked = true
             }
+
         }
 
         return binding.root
 
-    }
-
-    private fun saveStarred(isStarred: Boolean, imgUrl: String) {
-        sharedPref
-        with(sharedPref.edit()) {
-            putBoolean(imgUrl, isStarred)
-            commit()
-        }
     }
 
     override fun onDestroyView() {
