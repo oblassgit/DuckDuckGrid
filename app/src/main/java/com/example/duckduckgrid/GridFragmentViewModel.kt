@@ -1,6 +1,5 @@
 package com.example.duckduckgrid
 
-import android.content.SharedPreferences
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.LiveData
