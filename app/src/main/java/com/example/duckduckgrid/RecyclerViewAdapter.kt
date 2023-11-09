@@ -1,7 +1,6 @@
 package com.example.duckduckgrid
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -27,11 +26,13 @@ class RecyclerViewAdapter :
 
     private var onClickListener: OnDuckClickListener? = null
 
-    class ViewHolder(binding: GridItemBinding, val context: Context) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: GridItemBinding, val context: Context) :
+        RecyclerView.ViewHolder(binding.root) {
         val imgView: ImageView
         val starBtnOff: ImageButton
         val starBtnOn: ImageButton
         val itemBinding: GridItemBinding
+
         init {
             // Define click listener for the ViewHolder's View
             imgView = binding.imgView
@@ -57,32 +58,36 @@ class RecyclerViewAdapter :
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val sharedPref: SharedPreferences = viewHolder.context.getSharedPreferences("duckduck", Context.MODE_PRIVATE)
         val item = getItem(position)
         Glide.with(viewHolder.imgView.context)
             .load(item.url)
             .into(viewHolder.imgView)
 
         viewHolder.itemView.setOnClickListener {
-            onClickListener?.onClick(position, item )
+            onClickListener?.onClick(position, item)
         }
         viewHolder.imgView.setOnClickListener {
-            onClickListener?.onClick(position, item )
+            onClickListener?.onClick(position, item)
         }
-        var isStarred = sharedPref.getBoolean(item.url, false)
+        var isStarred = item.liked
         item.liked = isStarred
         viewHolder.itemBinding.item = item
 
 
         //2 onclick listeners because of switching between two buttons to achieve different button images
         viewHolder.starBtnOff.setOnClickListener {
-            DuckRepository.toggleLiked(item, sharedPref)
+            item?.let {
+                onClickListener?.starDuck(item, true)
+            }
             viewHolder.itemBinding.item = item
             viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         }
 
         viewHolder.starBtnOn.setOnClickListener {
-            DuckRepository.toggleLiked(item, sharedPref)
+            //DuckRepository.toggleLiked(item, sharedPref)
+            item?.let {
+                onClickListener?.starDuck(it, false)
+            }
             viewHolder.itemBinding.item = item
         }
 
@@ -96,5 +101,7 @@ class RecyclerViewAdapter :
     // onClickListener Interface
     interface OnDuckClickListener {
         fun onClick(position: Int, item: Item)
+
+        fun starDuck(item: Item, shouldStar: Boolean)
     }
 }
