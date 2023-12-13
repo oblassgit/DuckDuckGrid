@@ -22,9 +22,9 @@ data class Item(
     var date: String? = null,
     val id: UUID = UUID.randomUUID(),
     var liked: Boolean = false
-): Parcelable
+) : Parcelable
 
-class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
+class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
 
     private val _itemList = MutableLiveData<MutableList<Item>>()
 
@@ -32,7 +32,7 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
         get() = _itemList
 
     fun initItems() {
-        _itemList.value =  mutableListOf(
+        _itemList.value = mutableListOf(
             Item(),
             Item(),
             Item(),
@@ -47,13 +47,13 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
     }
 
 
-    private suspend fun fetchRandomUrl(callback: (()->Unit), item: Item) {
+    private suspend fun fetchRandomUrl(callback: (() -> Unit), item: Item) {
         withContext(Dispatchers.Default) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             item.url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"")[0]
             item.date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
-            Log.d("DuckDuckDate", item.date?:"")
-            Log.d("DuckDuck", item.url ?:"")
+            Log.d("DuckDuckDate", item.date ?: "")
+            Log.d("DuckDuck", item.url ?: "")
 
             callback()
         }
@@ -62,9 +62,10 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
     private val callback: (() -> Unit) = {
         _itemList.postValue(_itemList.value?.toMutableList())
     }
+
     fun loadItems() {
-        _itemList.value?.forEach{ i ->
-            if(i.url == null) {
+        _itemList.value?.forEach { i ->
+            if (i.url == null) {
                 launch {
                     fetchRandomUrl(callback, i)
                 }
@@ -78,6 +79,15 @@ class GridFragmentViewModel : ViewModel(),  CoroutineScope by MainScope()  {
         launch {
             fetchRandomUrl(callback, item)
         }
-        _itemList.value?.add(0,item)
+        _itemList.value?.add(0, item)
+    }
+
+    fun starItem(itemUrl: String, shouldStar: Boolean) {
+        val items = _itemList.value
+
+        items?.let {
+            it.first { item -> item.url == itemUrl }.liked = shouldStar
+            _itemList.postValue(it)
+        }
     }
 }
