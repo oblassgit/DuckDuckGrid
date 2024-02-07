@@ -1,11 +1,13 @@
 package com.example.duckduckgrid
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -29,6 +31,9 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         requireContext().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
     }
 
+    private var spanCount : Int = 2
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,12 +49,35 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         val fab: FloatingActionButton = binding.addDuckBtn
 
         recyclerView.layoutManager =
-            StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL).apply {
+            StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL).apply {
                 gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
             }
 
         fab.setOnClickListener {
             viewModel.addItem()
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(
+            requireActivity(),
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    spanCount = if(detector.scaleFactor < 1) {
+                        3
+
+                    } else {
+                        2
+                    }
+                    binding.recyclerView.layoutManager =
+                        StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL).apply {
+                            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+                        }
+                    return super.onScale(detector)
+                }
+            }
+        )
+
+        binding.recyclerView.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
         }
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object :
