@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".SingleImageFragment">
 
+    <include layout="@layout/toolbar"/>
+
+
+    <Space
+        android:id="@+id/spacer"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
@@ -17,7 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spacer"
         tools:src="@tools:sample/avatars" />
 
     <TextView
