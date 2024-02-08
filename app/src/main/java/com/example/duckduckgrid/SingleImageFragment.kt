@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -82,6 +83,7 @@ class SingleImageFragment : Fragment() {
                     scaleFactor *= detector.scaleFactor
                     scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
 
+                    binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                     binding.imageView.scaleX = scaleFactor
                     binding.imageView.scaleY = scaleFactor
 
@@ -97,12 +99,6 @@ class SingleImageFragment : Fragment() {
         binding.imageView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
         }
-
-        /*val scaleGestureDetector = ScaleGestureDetector(requireActivity(), PinchZoomListener())
-        binding.imageView.setOnTouchListener(OnTouchListener { v, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            true
-        })*/
 
 
         return binding.root

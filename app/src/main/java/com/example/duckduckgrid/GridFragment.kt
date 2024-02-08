@@ -13,9 +13,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -49,9 +48,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         val fab: FloatingActionButton = binding.addDuckBtn
 
         recyclerView.layoutManager =
-            StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL).apply {
-                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-            }
+            GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
 
         fab.setOnClickListener {
             viewModel.addItem()
@@ -61,16 +58,17 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             requireActivity(),
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    var initSpanCount = spanCount
                     spanCount = if(detector.scaleFactor < 1) {
                         3
 
                     } else {
                         2
                     }
-                    binding.recyclerView.layoutManager =
-                        StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL).apply {
-                            gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-                        }
+                    if (initSpanCount != spanCount) {
+                        recyclerView.layoutManager =
+                            GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
+                    }
                     return super.onScale(detector)
                 }
             }
