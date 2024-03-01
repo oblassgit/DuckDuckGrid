@@ -54,29 +54,59 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             viewModel.addItem()
         }
 
-        val scaleGestureDetector = ScaleGestureDetector(
-            requireActivity(),
-            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    var initSpanCount = spanCount
-                    spanCount = if(detector.scaleFactor < 1) {
-                        3
+        var onScale: Boolean = false
 
-                    } else {
-                        2
-                    }
-                    if (initSpanCount != spanCount) {
-                        recyclerView.layoutManager =
-                            GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
-                    }
-                    return super.onScale(detector)
-                }
+        fun onScaleCallback(): Boolean {
+            return onScale
+        }
+
+        var listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                onScale = true
+                Log.d("listener", "onScaleBegin")
+                return super.onScaleBegin(detector)
             }
-        )
 
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                /*var initSpanCount = spanCount
+                spanCount = if(detector.scaleFactor < 1) {
+                    3
+
+                } else {
+                    2
+                }
+                if (initSpanCount != spanCount) {
+                    recyclerView.layoutManager =
+                        GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
+                }*/
+
+                Log.d("listener", "current ${detector.currentSpan}")
+                Log.d("listener", "scalefactor ${detector.scaleFactor}")
+                Log.d("listener", "previous ${detector.previousSpan}")
+
+                return super.onScale(detector)
+            }
+
+            override fun onScaleEnd(detector: ScaleGestureDetector) {
+                Log.d("listener", "onScaleEnd")
+                onScale = false
+                super.onScaleEnd(detector)
+            }
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
+
+        binding.recyclerView.addOnItemTouchListener(object : ItemTouchListenerDispatcher(
+            CustomGestureDetector(requireActivity(), listener), ::onScaleCallback
+        ) {
+
+        })
+
+        /*
         binding.recyclerView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
-        }
+        }*/
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object :
             RecyclerViewAdapter.OnDuckClickListener {
