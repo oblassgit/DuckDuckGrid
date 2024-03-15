@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 class GridFragment : Fragment(), CoroutineScope by MainScope() {
+    
     private var _binding: FragmentGridBinding? = null
     private val binding get() = _binding!!
 
@@ -31,6 +32,11 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     }
 
     private var spanCount : Int = 2
+
+    private val SMALL_MAX_SCALE_FACTOR = 1.25f
+    private val SPAN_SLOP = 7
+
+    private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -43,12 +49,30 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         val recyclerViewAdapter = RecyclerViewAdapter()
 
         val recyclerView: RecyclerView = binding.recyclerView
+        val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
         recyclerView.adapter = recyclerViewAdapter
+        recyclerViewSmall.adapter = recyclerViewAdapter
 
         val fab: FloatingActionButton = binding.addDuckBtn
 
         recyclerView.layoutManager =
-            GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
+            GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
+
+        recyclerViewSmall.layoutManager =
+            GridLayoutManager(activity, 3, GridLayoutManager.VERTICAL, false)
+
+        when (viewMode) {
+            ViewMode.BIG -> {
+                recyclerView.visibility = View.VISIBLE
+                recyclerViewSmall.visibility = View.INVISIBLE
+            }
+
+            ViewMode.SMALL -> {
+                recyclerViewSmall.visibility = View.VISIBLE
+                recyclerView.visibility = View.INVISIBLE
+
+            }
+        }
 
         fab.setOnClickListener {
             viewModel.addItem()
@@ -60,26 +84,39 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             return onScale
         }
 
+
+
         var listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
-            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                onScale = true
-                Log.d("listener", "onScaleBegin")
-                return super.onScaleBegin(detector)
-            }
-
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                /*var initSpanCount = spanCount
-                spanCount = if(detector.scaleFactor < 1) {
-                    3
 
-                } else {
-                    2
+
+
+                if (detector.scaleFactor < 1) {
+                    recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
+                        recyclerView.animate().scaleX(0.8f).scaleY(0.8f).alpha(0f).start()
+                    }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                        recyclerView.visibility = View.INVISIBLE}.start()
+                    viewMode = ViewMode.SMALL
+
+                } else if (detector.scaleFactor > 1) {
+                    recyclerView.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
+                        recyclerViewSmall.animate().scaleY(SMALL_MAX_SCALE_FACTOR)
+                            .scaleX(SMALL_MAX_SCALE_FACTOR)
+                            .alpha(0f)
+                            .start()
+                    }.withEndAction { recyclerView.visibility = View.VISIBLE
+                        recyclerViewSmall.visibility = View.INVISIBLE}.start()
+                    viewMode = ViewMode.BIG
                 }
-                if (initSpanCount != spanCount) {
-                    recyclerView.layoutManager =
-                        GridLayoutManager(activity, spanCount, GridLayoutManager.VERTICAL, false)
-                }*/
+
+
+                Log.d("visibility", "${recyclerView.visibility}")
+                Log.d("visibility", "${recyclerViewSmall.visibility}")
+
+                Log.d("alpha", "small ${recyclerView.alpha}")
+                Log.d("alpha", "fat ${recyclerViewSmall.alpha}")
+
 
                 Log.d("listener", "current ${detector.currentSpan}")
                 Log.d("listener", "scalefactor ${detector.scaleFactor}")
@@ -88,25 +125,26 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 return super.onScale(detector)
             }
 
-            override fun onScaleEnd(detector: ScaleGestureDetector) {
-                Log.d("listener", "onScaleEnd")
-                onScale = false
-                super.onScaleEnd(detector)
-            }
+
         }
 
         val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
 
-        binding.recyclerView.addOnItemTouchListener(object : ItemTouchListenerDispatcher(
+        /*binding.recyclerView.addOnItemTouchListener(object : ItemTouchListenerDispatcher(
             CustomGestureDetector(requireActivity(), listener), ::onScaleCallback
         ) {
 
-        })
+        })*/
 
-        /*
         binding.recyclerView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
-        }*/
+            false
+        }
+
+        binding.recyclerViewSmall.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            false
+        }
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object :
             RecyclerViewAdapter.OnDuckClickListener {
@@ -132,8 +170,36 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             }
         })
 
+        (binding.recyclerViewSmall.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object :
+            RecyclerViewAdapter.OnDuckClickListener {
+            override fun onClick(position: Int, item: Item) {
+
+                if (item.url != null && item.date != null) {
+                    Log.d("DuckDuck", "WOOOHOOO! $position")
+                    findNavController().navigate(
+                        GridFragmentDirections.actionFirstFragmentToSecondFragment(
+                            item.url ?: "",
+                            item.date ?: "",
+                            item
+                        )
+                    )
+                }
+            }
+
+            override fun starDuck(item: Item, shouldStar: Boolean) {
+                DuckRepository.toggleLiked(item, sharedPreferences)
+                item.url?.let {
+                    viewModel.starItem(it, shouldStar)
+                }
+            }
+        })
+
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
             (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
+        }
+
+        viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
+            (binding.recyclerViewSmall.adapter as? RecyclerViewAdapter)?.submitList(itemList)
         }
 
         viewModel.loadItems()
