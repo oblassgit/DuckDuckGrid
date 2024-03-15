@@ -31,10 +31,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         requireContext().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
     }
 
-    private var spanCount : Int = 2
-
     private val SMALL_MAX_SCALE_FACTOR = 1.25f
-    private val SPAN_SLOP = 7
 
     private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
 
@@ -78,12 +75,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             viewModel.addItem()
         }
 
-        var onScale: Boolean = false
-
-        fun onScaleCallback(): Boolean {
-            return onScale
-        }
-
 
 
         var listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -93,10 +84,23 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
 
                 if (detector.scaleFactor < 1) {
+                    /*
                     recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
                         recyclerView.animate().scaleX(0.8f).scaleY(0.8f).alpha(0f).start()
                     }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
-                        recyclerView.visibility = View.INVISIBLE}.start()
+                        //recyclerView.visibility = View.INVISIBLE
+                    }.start()*/
+
+                    recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
+                        recyclerView.animate().scaleY(SMALL_MAX_SCALE_FACTOR)
+                            .scaleX(SMALL_MAX_SCALE_FACTOR)
+                            .alpha(0f)
+                            .start()
+                    }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                        //recyclerViewSmall.visibility = View.INVISIBLE
+                    }.start()
+
+
                     viewMode = ViewMode.SMALL
 
                 } else if (detector.scaleFactor > 1) {
@@ -106,7 +110,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerView.visibility = View.VISIBLE
-                        recyclerViewSmall.visibility = View.INVISIBLE}.start()
+                        //recyclerViewSmall.visibility = View.INVISIBLE
+                    }.start()
                     viewMode = ViewMode.BIG
                 }
 
@@ -129,12 +134,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
-
-        /*binding.recyclerView.addOnItemTouchListener(object : ItemTouchListenerDispatcher(
-            CustomGestureDetector(requireActivity(), listener), ::onScaleCallback
-        ) {
-
-        })*/
 
         binding.recyclerView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
