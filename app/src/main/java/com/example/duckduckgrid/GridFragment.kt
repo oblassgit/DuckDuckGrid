@@ -81,8 +81,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
 
-
-
                 if (detector.scaleFactor < 1) {
                     recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
                         recyclerView.animate().scaleY(SMALL_MAX_SCALE_FACTOR)
