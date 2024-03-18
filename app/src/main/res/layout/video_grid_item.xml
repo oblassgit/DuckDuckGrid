@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+        <import
+            type="android.view.View"
+            alias="View" />
+        <variable name="item" type="com.example.duckduckgrid.Item"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <VideoView
+            android:id="@+id/vidView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="4dp"
+            android:contentDescription="@string/cute_duck"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/starImgBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:visibility="@{item.liked ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@id/vidView"
+            app:layout_constraintEnd_toEndOf="@id/vidView"
+            app:srcCompat="@android:drawable/btn_star_big_off" />
+
+        <ImageButton
+            android:id="@+id/starImgBtnActive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:visibility="@{item.liked ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/vidView"
+            app:layout_constraintEnd_toEndOf="@id/vidView"
+            app:srcCompat="@android:drawable/btn_star_big_on" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
