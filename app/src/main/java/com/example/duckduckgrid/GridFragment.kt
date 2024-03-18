@@ -77,27 +77,19 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
 
 
-        var listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
 
 
 
                 if (detector.scaleFactor < 1) {
-                    /*
-                    recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
-                        recyclerView.animate().scaleX(0.8f).scaleY(0.8f).alpha(0f).start()
-                    }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
-                        //recyclerView.visibility = View.INVISIBLE
-                    }.start()*/
-
                     recyclerViewSmall.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
                         recyclerView.animate().scaleY(SMALL_MAX_SCALE_FACTOR)
                             .scaleX(SMALL_MAX_SCALE_FACTOR)
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
-                        //recyclerViewSmall.visibility = View.INVISIBLE
                     }.start()
 
 
@@ -110,7 +102,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerView.visibility = View.VISIBLE
-                        //recyclerViewSmall.visibility = View.INVISIBLE
                     }.start()
                     viewMode = ViewMode.BIG
                 }
