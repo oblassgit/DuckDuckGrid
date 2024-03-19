@@ -13,6 +13,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 import com.example.duckduckgrid.databinding.VideoGridItemBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.net.URL
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class VideoRecyclerViewAdapter :
     ListAdapter<Item, VideoRecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
@@ -23,7 +33,7 @@ class VideoRecyclerViewAdapter :
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
             return false//oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
         }
-    }) {
+    }), CoroutineScope by MainScope() {
 
     private var onClickListener: VideoRecyclerViewAdapter.OnDuckClickListener? = null
 
@@ -67,7 +77,9 @@ class VideoRecyclerViewAdapter :
             val item = getItem(position)
 
             viewHolder.vidView.setVideoURI(Uri.parse(item.url))
-            viewHolder.vidView.start()
+            launch {
+                playVideo(viewHolder.vidView)
+            }
 
 
             Log.d("Video is playing", viewHolder.vidView.isPlaying.toString())
@@ -101,6 +113,8 @@ class VideoRecyclerViewAdapter :
 
         }
 
+
+
     // A function to bind the onclickListener.
     fun setOnDuckClickListener(onClickListener: OnDuckClickListener) {
         this.onClickListener = onClickListener
@@ -113,4 +127,11 @@ class VideoRecyclerViewAdapter :
         fun starDuck(item: Item, shouldStar: Boolean)
     }
 
+    private suspend fun playVideo(videoView: VideoView) {
+        withContext(Dispatchers.Default) {
+            videoView.start()
+            delay(3000)
+            videoView.pause()
+        }
+    }
 }

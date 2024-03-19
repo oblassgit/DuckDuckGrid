@@ -27,7 +27,8 @@ class VideoFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4")
+            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"),
+            Item("https://storage/emulated/0/Download/Screen_recording_20240315_154601.mp4")
         )
     }
 
