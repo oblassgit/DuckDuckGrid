@@ -15,18 +15,22 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.example.duckduckgrid.databinding.FragmentVideoBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 
-class VideoFragment : Fragment() {
-
-    private val sharedPreferences: SharedPreferences by lazy {
-        requireContext().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
-    }
+class VideoFragment : Fragment(), CoroutineScope by MainScope() {
 
     private var _binding: FragmentVideoBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: VideoFragmentViewModel by viewModels()
+
+    private val sharedPreferences: SharedPreferences by lazy {
+        requireContext().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
+    }
 
     private val SMALL_MAX_SCALE_FACTOR = 1.25f
 
@@ -67,7 +71,6 @@ class VideoFragment : Fragment() {
         }
 
 
-
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -78,7 +81,8 @@ class VideoFragment : Fragment() {
                             .scaleX(SMALL_MAX_SCALE_FACTOR)
                             .alpha(0f)
                             .start()
-                    }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                    }.withEndAction {
+                        recyclerViewSmall.visibility = View.VISIBLE
                     }.start()
 
 
@@ -90,15 +94,40 @@ class VideoFragment : Fragment() {
                             .scaleX(SMALL_MAX_SCALE_FACTOR)
                             .alpha(0f)
                             .start()
-                    }.withEndAction { recyclerView.visibility = View.VISIBLE
+                    }.withEndAction {
+                        recyclerView.visibility = View.VISIBLE
                     }.start()
                     viewMode = ViewMode.BIG
                 }
+
+
+                Log.d("visibility", "${recyclerView.visibility}")
+                Log.d("visibility", "${recyclerViewSmall.visibility}")
+
+                Log.d("alpha", "small ${recyclerView.alpha}")
+                Log.d("alpha", "fat ${recyclerViewSmall.alpha}")
+
+
+                Log.d("listener", "current ${detector.currentSpan}")
+                Log.d("listener", "scalefactor ${detector.scaleFactor}")
+                Log.d("listener", "previous ${detector.previousSpan}")
 
                 return super.onScale(detector)
             }
 
 
+        }
+
+        val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
+
+        binding.recyclerView.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            false
+        }
+
+        binding.recyclerViewSmall.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            false
         }
 
         (binding.recyclerView.adapter as? VideoRecyclerViewAdapter)?.setOnDuckClickListener(object :
@@ -125,17 +154,30 @@ class VideoFragment : Fragment() {
             }
         })
 
-        val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
+        (binding.recyclerViewSmall.adapter as? VideoRecyclerViewAdapter)?.setOnDuckClickListener(
+            object :
+                VideoRecyclerViewAdapter.OnDuckClickListener {
+                override fun onClick(position: Int, item: Item) {
 
-        binding.recyclerView.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            false
-        }
+                    if (item.url != null && item.date != null) {
+                        Log.d("DuckDuck", "WOOOHOOO! $position")
+                        findNavController().navigate(
+                            GridFragmentDirections.actionFirstFragmentToSecondFragment(
+                                item.url ?: "",
+                                item.date ?: "",
+                                item
+                            )
+                        )
+                    }
+                }
 
-        binding.recyclerViewSmall.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            false
-        }
+                override fun starDuck(item: Item, shouldStar: Boolean) {
+                    DuckRepository.toggleLiked(item, sharedPreferences)
+                    item.url?.let {
+                        viewModel.starItem(it, shouldStar)
+                    }
+                }
+            })
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
             (binding.recyclerView.adapter as? VideoRecyclerViewAdapter)?.submitList(itemList)
@@ -168,6 +210,4 @@ class VideoFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }

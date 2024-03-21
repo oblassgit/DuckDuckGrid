@@ -38,6 +38,9 @@
         <argument
             android:name="item"
             app:argType="com.example.duckduckgrid.Item" />
+        <action
+            android:id="@+id/action_SingleImageFragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
     </fragment>
     <fragment
         android:id="@+id/videoFragment"

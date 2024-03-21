@@ -41,9 +41,13 @@ class MainActivity : AppCompatActivity() {
 
                     currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-                    if (currentFragment !is GridFragment){
+                    if (currentFragment !is GridFragment && currentFragment !is SingleImageFragment){
                         navController.navigate(
                             VideoFragmentDirections.actionVideoFragmentToGridFragment()
+                        )
+                    } else if (currentFragment is SingleImageFragment) {
+                        navController.navigate(
+                            SingleImageFragmentDirections.actionSecondFragmentToFirstFragment()
                         )
                     }
 
@@ -52,9 +56,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.videos -> {
                     currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-                    if (currentFragment !is VideoFragment){
+                    if (currentFragment is GridFragment){
                         navController.navigate(
                             GridFragmentDirections.actionGridFragmentToVideoFragment()
+                        )
+                    } else if (currentFragment is SingleImageFragment) {
+                        navController.navigate(
+                            SingleImageFragmentDirections.actionSingleImageFragmentToVideoFragment()
                         )
                     }
                     true
