@@ -23,12 +23,14 @@ class VideoFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
     fun initItems() {
         _itemList.value = mutableListOf(
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
             Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"),
-            Item("https://storage/emulated/0/Download/Screen_recording_20240315_154601.mp4")
+            Item("https://storage/emulated/0/Download/Screen_recording_20240315_154601.mp4"),
+            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+            Item("https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4")
         )
     }
 

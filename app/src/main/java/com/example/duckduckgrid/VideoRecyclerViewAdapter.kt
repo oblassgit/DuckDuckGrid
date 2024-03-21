@@ -18,11 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import java.net.URL
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class VideoRecyclerViewAdapter :
     ListAdapter<Item, VideoRecyclerViewAdapter.ViewHolder>(object : DiffUtil.ItemCallback<Item>() {
@@ -81,9 +77,7 @@ class VideoRecyclerViewAdapter :
                 playVideo(viewHolder.vidView)
             }
 
-
             Log.d("Video is playing", viewHolder.vidView.isPlaying.toString())
-            Log.d("Video URI", Uri.parse(item.url).toString())
 
 
             var isStarred = item.liked

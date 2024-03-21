@@ -23,23 +23,44 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.GridFragment,
+                R.id.videoFragment
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        val navHostFragment: Fragment? = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        var currentFragment: Fragment?
 
         bottomNav = findViewById(R.id.bottomNav) as BottomNavigationView
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
-                    loadFragment(GridFragment())
+
+                    currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+                    if (currentFragment !is GridFragment){
+                        navController.navigate(
+                            VideoFragmentDirections.actionVideoFragmentToGridFragment()
+                        )
+                    }
+
                     true
                 }
                 R.id.videos -> {
-                    loadFragment(VideoFragment())
+                    currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+                    if (currentFragment !is VideoFragment){
+                        navController.navigate(
+                            GridFragmentDirections.actionGridFragmentToVideoFragment()
+                        )
+                    }
                     true
                 }
 
-                else -> {loadFragment(GridFragment())
-                    true}
+                else -> true
             }
         }
 
@@ -51,9 +72,4 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    private  fun loadFragment(fragment: Fragment){
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_fragment_content_main,fragment)
-        transaction.commit()
-    }
 }

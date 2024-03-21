@@ -15,6 +15,9 @@
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SingleImageFragment"
             app:enterAnim="@anim/nav_default_enter_anim" />
+        <action
+            android:id="@+id/action_GridFragment_to_videoFragment"
+            app:destination="@id/videoFragment" />
     </fragment>
     <fragment
         android:id="@+id/SingleImageFragment"
@@ -35,5 +38,14 @@
         <argument
             android:name="item"
             app:argType="com.example.duckduckgrid.Item" />
+    </fragment>
+    <fragment
+        android:id="@+id/videoFragment"
+        android:name="com.example.duckduckgrid.VideoFragment"
+        android:label="Duck Duck Vid"
+        tools:layout="@layout/fragment_video" >
+        <action
+            android:id="@+id/action_videoFragment_to_GridFragment"
+            app:destination="@id/GridFragment" />
     </fragment>
 </navigation>
