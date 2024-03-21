@@ -46,9 +46,7 @@ class MainActivity : AppCompatActivity() {
                             VideoFragmentDirections.actionVideoFragmentToGridFragment()
                         )
                     } else if (currentFragment is SingleImageFragment) {
-                        navController.navigate(
-                            SingleImageFragmentDirections.actionSecondFragmentToFirstFragment()
-                        )
+                        navController.navigateUp()
                     }
 
                     true

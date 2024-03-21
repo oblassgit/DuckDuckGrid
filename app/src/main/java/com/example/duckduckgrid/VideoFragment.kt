@@ -15,9 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.example.duckduckgrid.databinding.FragmentVideoBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
@@ -83,6 +81,7 @@ class VideoFragment : Fragment(), CoroutineScope by MainScope() {
                             .start()
                     }.withEndAction {
                         recyclerViewSmall.visibility = View.VISIBLE
+                        recyclerView.visibility = View.INVISIBLE
                     }.start()
 
 
@@ -96,16 +95,17 @@ class VideoFragment : Fragment(), CoroutineScope by MainScope() {
                             .start()
                     }.withEndAction {
                         recyclerView.visibility = View.VISIBLE
+                        recyclerViewSmall.visibility = View.INVISIBLE
                     }.start()
                     viewMode = ViewMode.BIG
                 }
 
 
-                Log.d("visibility", "${recyclerView.visibility}")
-                Log.d("visibility", "${recyclerViewSmall.visibility}")
+                Log.d("visibility", "normal ${recyclerView.visibility}")
+                Log.d("visibility", "small ${recyclerViewSmall.visibility}")
 
-                Log.d("alpha", "small ${recyclerView.alpha}")
-                Log.d("alpha", "fat ${recyclerViewSmall.alpha}")
+                Log.d("alpha", "normal ${recyclerView.alpha}")
+                Log.d("alpha", "small ${recyclerViewSmall.alpha}")
 
 
                 Log.d("listener", "current ${detector.currentSpan}")

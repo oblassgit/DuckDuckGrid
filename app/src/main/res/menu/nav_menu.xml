@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:splitMotionEvents="false"
         android:id="@+id/home"
         android:icon="@drawable/image_icon"
-        android:title="Photos"  />
+        android:title="@string/photos"  />
     <item
+        android:splitMotionEvents="false"
         android:id="@+id/videos"
         android:icon="@android:drawable/presence_video_online"
         android:iconTint="@color/black"
-        android:title="Videos" />
+        android:title="@string/videos" />
 </menu>
