@@ -92,6 +92,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
 
                     viewMode = ViewMode.SMALL
+                    Log.d("ViewMode", "SMALL")
+
 
                 } else if (detector.scaleFactor > 1) {
                     recyclerView.animate().scaleX(1f).scaleY(1f).alpha(1f).withStartAction {
@@ -102,6 +104,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                     }.withEndAction { recyclerView.visibility = View.VISIBLE
                     }.start()
                     viewMode = ViewMode.BIG
+                    Log.d("ViewMode", "BIG")
                 }
 
 
@@ -115,6 +118,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 Log.d("listener", "current ${detector.currentSpan}")
                 Log.d("listener", "scalefactor ${detector.scaleFactor}")
                 Log.d("listener", "previous ${detector.previousSpan}")
+
 
                 return super.onScale(detector)
             }
