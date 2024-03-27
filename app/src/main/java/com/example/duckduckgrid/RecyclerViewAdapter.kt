@@ -65,6 +65,8 @@ class RecyclerViewAdapter :
             .load(item.url)
             .into(viewHolder.imgView)
 
+
+
         viewHolder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
         }

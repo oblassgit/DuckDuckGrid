@@ -15,17 +15,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.duckduckgrid.databinding.FragmentGridBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.duckduckgrid.databinding.FragmentLikedBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
-class GridFragment : Fragment(), CoroutineScope by MainScope() {
-    
-    private var _binding: FragmentGridBinding? = null
+class LikedFragment : Fragment(), CoroutineScope by MainScope() {
+
+    private var _binding: FragmentLikedBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: GridFragmentViewModel by viewModels()
+    private val viewModel: LikedFragmentViewModel by viewModels()
 
     private val sharedPreferences: SharedPreferences by lazy {
         requireContext().getSharedPreferences("duckduck", Context.MODE_PRIVATE)
@@ -47,7 +46,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentGridBinding.inflate(inflater, container, false)
+        _binding = FragmentLikedBinding.inflate(inflater, container, false)
 
         val recyclerViewAdapter = RecyclerViewAdapter()
 
@@ -55,8 +54,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
         recyclerView.adapter = recyclerViewAdapter
         recyclerViewSmall.adapter = recyclerViewAdapter
-
-        val fab: FloatingActionButton = binding.addDuckBtn
 
         recyclerView.layoutManager =
             GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
@@ -76,11 +73,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
             }
         }
-
-        fab.setOnClickListener {
-            viewModel.addItem()
-        }
-
 
 
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -114,18 +106,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 }
 
 
-                Log.d("visibility", "${recyclerView.visibility}")
-                Log.d("visibility", "${recyclerViewSmall.visibility}")
-
-                Log.d("alpha", "small ${recyclerView.alpha}")
-                Log.d("alpha", "fat ${recyclerViewSmall.alpha}")
-
-
-                Log.d("listener", "current ${detector.currentSpan}")
-                Log.d("listener", "scalefactor ${detector.scaleFactor}")
-                Log.d("listener", "previous ${detector.previousSpan}")
-
-
                 return super.onScale(detector)
             }
 
@@ -151,7 +131,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 if (item.url != null && item.date != null) {
                     Log.d("DuckDuck", "WOOOHOOO! $position")
                     findNavController().navigate(
-                        GridFragmentDirections.actionFirstFragmentToSecondFragment(
+                        LikedFragmentDirections.actionLikedFragmentToSingleImageFragment(
                             item.url ?: "",
                             item.date ?: "",
                             item
@@ -172,10 +152,10 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             RecyclerViewAdapter.OnDuckClickListener {
             override fun onClick(position: Int, item: Item) {
 
-                if (item.url != null && item.date != null) {
+                if (item.url != null) {
                     Log.d("DuckDuck", "WOOOHOOO! $position")
                     findNavController().navigate(
-                        GridFragmentDirections.actionFirstFragmentToSecondFragment(
+                        LikedFragmentDirections.actionLikedFragmentToSingleImageFragment(
                             item.url ?: "",
                             item.date ?: "",
                             item

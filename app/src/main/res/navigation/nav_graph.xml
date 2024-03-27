@@ -16,8 +16,8 @@
             app:destination="@id/SingleImageFragment"
             app:enterAnim="@anim/nav_default_enter_anim" />
         <action
-            android:id="@+id/action_GridFragment_to_videoFragment"
-            app:destination="@id/videoFragment" />
+            android:id="@+id/action_GridFragment_to_likedFragment"
+            app:destination="@id/LikedFragment" />
     </fragment>
     <fragment
         android:id="@+id/SingleImageFragment"
@@ -39,16 +39,19 @@
             android:name="item"
             app:argType="com.example.duckduckgrid.Item" />
         <action
-            android:id="@+id/action_SingleImageFragment_to_videoFragment"
-            app:destination="@id/videoFragment" />
+            android:id="@+id/action_SingleImageFragment_to_likedFragment"
+            app:destination="@id/LikedFragment" />
     </fragment>
     <fragment
-        android:id="@+id/videoFragment"
-        android:name="com.example.duckduckgrid.VideoFragment"
-        android:label="Duck Duck Vid"
-        tools:layout="@layout/fragment_video" >
+        android:id="@+id/LikedFragment"
+        android:name="com.example.duckduckgrid.LikedFragment"
+        android:label="Duck Duck Liked"
+        tools:layout="@layout/fragment_liked" >
         <action
-            android:id="@+id/action_videoFragment_to_GridFragment"
+            android:id="@+id/action_likedFragment_to_GridFragment"
             app:destination="@id/GridFragment" />
+        <action
+            android:id="@+id/action_LikedFragment_to_SingleImageFragment"
+            app:destination="@id/SingleImageFragment" />
     </fragment>
 </navigation>
