@@ -182,6 +182,14 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
 
         viewModel.loadItems()
 
+        if (viewModel.itemList.value!!.isEmpty()) {
+            binding.noDucksImage.visibility = View.VISIBLE
+            binding.noDucksText.visibility = View.VISIBLE
+        } else {
+            binding.noDucksImage.visibility = View.GONE
+            binding.noDucksText.visibility = View.GONE
+        }
+
         return binding.root
     }
 
@@ -189,6 +197,8 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         viewModel.loadItems()
+
+
     }
 
     override fun onAttach(context: Context) {
@@ -196,6 +206,8 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         activity?.let {
             viewModel.initItems()
         }
+
+
 
     }
 
