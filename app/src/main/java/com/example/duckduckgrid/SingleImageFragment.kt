@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
@@ -7,8 +8,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -26,6 +29,7 @@ class SingleImageFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,9 +72,36 @@ class SingleImageFragment : Fragment() {
             }
 
         }
+        var scaleFactor = 1F
+        val initScaleX = binding.imageView.scaleX
+        val initScaleY = binding.imageView.scaleY
+
+        val scaleGestureDetector = ScaleGestureDetector(
+            requireActivity(),
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    scaleFactor *= detector.scaleFactor
+                    scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
+
+                    binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+                    binding.imageView.scaleX = scaleFactor
+                    binding.imageView.scaleY = scaleFactor
+
+                    return super.onScale(detector)
+                }
+
+                override fun onScaleEnd(detector: ScaleGestureDetector) {
+                    binding.imageView.scaleX = initScaleX
+                    binding.imageView.scaleY = initScaleY
+                }
+            }
+        )
+        binding.imageView.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+        }
+
 
         return binding.root
-
     }
 
     override fun onDestroyView() {

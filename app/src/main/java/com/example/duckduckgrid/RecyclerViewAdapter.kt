@@ -33,15 +33,17 @@ class RecyclerViewAdapter :
         val starBtnOn: ImageButton
         val itemBinding: GridItemBinding
 
-        init {
-            // Define click listener for the ViewHolder's View
-            imgView = binding.imgView
-            starBtnOff = binding.starImgBtn
-            starBtnOn = binding.starImgBtnActive
-            itemBinding = binding
+            init {
+                // Define click listener for the ViewHolder's View
+                imgView = binding.imgView
+                starBtnOff = binding.starImgBtn
+                starBtnOn = binding.starImgBtnActive
+                itemBinding = binding
+            }
+
         }
 
-    }
+
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -62,6 +64,8 @@ class RecyclerViewAdapter :
         Glide.with(viewHolder.imgView.context)
             .load(item.url)
             .into(viewHolder.imgView)
+
+
 
         viewHolder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)

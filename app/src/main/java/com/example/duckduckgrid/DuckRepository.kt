@@ -4,6 +4,8 @@ import android.content.SharedPreferences
 
 class DuckRepository {
     companion object {
+        lateinit var sharedPreferences: SharedPreferences
+
         fun toggleLiked(item: Item, sharedPreferences: SharedPreferences) {
             item.liked = !item.liked
             saveStarred(item.liked, sharedPreferences, item.url)

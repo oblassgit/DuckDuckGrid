@@ -12,4 +12,10 @@
     <string name="cute_duck">cute duck</string>
     <string name="textview">Date</string>
     <string name="new_duck">new Duck</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="photos">Photos</string>
+    <string name="liked">Liked</string>
+    <string name="you_have_no_liked_ducks">You have no liked Ducks</string>
+    <string name="duck_duck_grid_icon">Duck Duck Grid Icon</string>
 </resources>
