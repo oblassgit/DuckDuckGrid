@@ -1,57 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/GridFragment">
+    app:startDestination="@+id/grid">
 
-    <fragment
-        android:id="@+id/GridFragment"
-        android:name="com.example.duckduckgrid.GridFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_grid">
+    <include app:graph="@navigation/grid"/>
+    <include app:graph="@navigation/liked"/>
 
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SingleImageFragment"
-            app:enterAnim="@anim/nav_default_enter_anim" />
-        <action
-            android:id="@+id/action_GridFragment_to_likedFragment"
-            app:destination="@id/LikedFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SingleImageFragment"
-        android:name="com.example.duckduckgrid.SingleImageFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_single_image">
 
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/GridFragment"
-            app:enterAnim="@anim/nav_default_enter_anim" />
-        <argument
-            android:name="imgUrl"
-            app:argType="string" />
-        <argument
-            android:name="date"
-            app:argType="string" />
-        <argument
-            android:name="item"
-            app:argType="com.example.duckduckgrid.Item" />
-        <action
-            android:id="@+id/action_SingleImageFragment_to_likedFragment"
-            app:destination="@id/LikedFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/LikedFragment"
-        android:name="com.example.duckduckgrid.LikedFragment"
-        android:label="Duck Duck Liked"
-        tools:layout="@layout/fragment_liked" >
-        <action
-            android:id="@+id/action_likedFragment_to_GridFragment"
-            app:destination="@id/GridFragment" />
-        <action
-            android:id="@+id/action_LikedFragment_to_SingleImageFragment"
-            app:destination="@id/SingleImageFragment" />
-    </fragment>
+
+
 </navigation>
