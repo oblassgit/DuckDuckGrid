@@ -197,8 +197,6 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         viewModel.loadItems()
-
-
     }
 
     override fun onAttach(context: Context) {
@@ -206,8 +204,6 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         activity?.let {
             viewModel.initItems()
         }
-
-
 
     }
 
