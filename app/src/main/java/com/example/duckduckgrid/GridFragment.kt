@@ -114,18 +114,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 }
 
 
-                Log.d("visibility", "${recyclerView.visibility}")
-                Log.d("visibility", "${recyclerViewSmall.visibility}")
-
-                Log.d("alpha", "small ${recyclerView.alpha}")
-                Log.d("alpha", "fat ${recyclerViewSmall.alpha}")
-
-
-                Log.d("listener", "current ${detector.currentSpan}")
-                Log.d("listener", "scalefactor ${detector.scaleFactor}")
-                Log.d("listener", "previous ${detector.previousSpan}")
-
-
                 return super.onScale(detector)
             }
 
