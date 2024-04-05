@@ -29,7 +29,7 @@ class SingleImageFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "ResourceType")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,32 +45,51 @@ class SingleImageFragment : Fragment() {
 
         var isStarred = sharedPref.getBoolean(imgUrl, false)
         if (isStarred) {
-            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+            binding.starBtnOn.visibility = View.VISIBLE
+            binding.starBtnOff.visibility = View.GONE
             item.liked = true
         } else {
-            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+            binding.starBtnOn.visibility = View.GONE
+            binding.starBtnOff.visibility = View.VISIBLE
             item.liked = false
         }
 
 
         Log.d("DateAndUrl", "$imgUrl $date")
         binding.dateTxt.text = date
+        binding.urlTxt.text = imgUrl
 
         Glide.with(binding.imageView)
             .load(imgUrl)
             .into(binding.imageView)
 
-        binding.starBtn.setOnClickListener {
+        binding.starBtnOff.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+            binding.starBtnOff.visibility = View.GONE
+            binding.starBtnOn.visibility = View.VISIBLE
             DuckRepository.toggleLiked(item, sharedPref)
             isStarred = item.liked
-            binding.starBtn.setImageResource(when (item.liked) {
-                true -> android.R.drawable.btn_star_big_on
-                false -> android.R.drawable.btn_star_big_off
-            })
-            if (isStarred) {
-                view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+            view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+        }
+        binding.starBtnOn.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+            binding.starBtnOn.visibility = View.GONE
+            binding.starBtnOff.visibility = View.VISIBLE
+            DuckRepository.toggleLiked(item, sharedPref)
+            isStarred = item.liked
+        }
+        binding.infoBtn.setOnClickListener {
+            if (binding.infoPopup.visibility == View.GONE) {
+                binding.infoPopup.visibility = View.VISIBLE
+            } else {
+                binding.infoPopup
             }
-
+        }
+        binding.root.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+        }
+        binding.imageView.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
         }
         var scaleFactor = 1F
         val initScaleX = binding.imageView.scaleX
@@ -98,6 +117,7 @@ class SingleImageFragment : Fragment() {
         )
         binding.imageView.setOnTouchListener { _, event ->
             scaleGestureDetector.onTouchEvent(event)
+            false
         }
 
 
@@ -108,4 +128,5 @@ class SingleImageFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

@@ -8,7 +8,7 @@
     <item
         android:splitMotionEvents="false"
         android:id="@+id/liked"
-        android:icon="@android:drawable/star_big_off"
+        android:icon="@drawable/ic_star_off"
         android:iconTint="@color/black"
         android:title="@string/liked" />
 </menu>
