@@ -22,7 +22,6 @@
         tools:src="@tools:sample/avatars" />
 
     <ImageButton
-        android:theme="@style/Theme.DuckDuckGrid.Button"
         android:id="@+id/infoBtn"
         android:layout_width="53dp"
         android:layout_height="40dp"
@@ -35,7 +34,6 @@
 
 
     <ImageButton
-        android:theme="@style/Theme.DuckDuckGrid.Button"
         android:id="@+id/starBtnOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
