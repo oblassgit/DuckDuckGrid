@@ -8,10 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -59,9 +57,9 @@ class SingleImageFragment : Fragment() {
         binding.dateTxt.text = date
         binding.urlTxt.text = imgUrl
 
-        Glide.with(binding.imageView)
+        Glide.with(binding.photoview)
             .load(imgUrl)
-            .into(binding.imageView)
+            .into(binding.photoview)
 
         binding.starBtnOff.setOnClickListener {
             binding.infoPopup.visibility = View.GONE
@@ -88,36 +86,8 @@ class SingleImageFragment : Fragment() {
         binding.root.setOnClickListener {
             binding.infoPopup.visibility = View.GONE
         }
-        binding.imageView.setOnClickListener {
+        binding.photoview.setOnClickListener {
             binding.infoPopup.visibility = View.GONE
-        }
-        var scaleFactor = 1F
-        val initScaleX = binding.imageView.scaleX
-        val initScaleY = binding.imageView.scaleY
-
-        val scaleGestureDetector = ScaleGestureDetector(
-            requireActivity(),
-            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    scaleFactor *= detector.scaleFactor
-                    scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
-
-                    binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                    binding.imageView.scaleX = scaleFactor
-                    binding.imageView.scaleY = scaleFactor
-
-                    return super.onScale(detector)
-                }
-
-                override fun onScaleEnd(detector: ScaleGestureDetector) {
-                    binding.imageView.scaleX = initScaleX
-                    binding.imageView.scaleY = initScaleY
-                }
-            }
-        )
-        binding.imageView.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
-            false
         }
 
 
