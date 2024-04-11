@@ -33,7 +33,7 @@
             android:visibility="@{item.liked ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="@id/imgView"
             app:layout_constraintEnd_toEndOf="@id/imgView"
-            app:srcCompat="@android:drawable/btn_star_big_off" />
+            app:srcCompat="@drawable/ic_star_off" />
 
         <ImageButton
             android:id="@+id/starImgBtnActive"
@@ -43,7 +43,7 @@
             android:visibility="@{item.liked ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/imgView"
             app:layout_constraintEnd_toEndOf="@id/imgView"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
+            app:srcCompat="@drawable/ic_star_on" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

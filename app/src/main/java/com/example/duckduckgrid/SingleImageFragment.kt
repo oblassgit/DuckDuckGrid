@@ -8,10 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -29,7 +27,7 @@ class SingleImageFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "ResourceType")
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,59 +43,51 @@ class SingleImageFragment : Fragment() {
 
         var isStarred = sharedPref.getBoolean(imgUrl, false)
         if (isStarred) {
-            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_on)
+            binding.starBtnOn.visibility = View.VISIBLE
+            binding.starBtnOff.visibility = View.GONE
             item.liked = true
         } else {
-            binding.starBtn.setImageResource(android.R.drawable.btn_star_big_off)
+            binding.starBtnOn.visibility = View.GONE
+            binding.starBtnOff.visibility = View.VISIBLE
             item.liked = false
         }
 
 
         Log.d("DateAndUrl", "$imgUrl $date")
         binding.dateTxt.text = date
+        binding.urlTxt.text = imgUrl
 
-        Glide.with(binding.imageView)
+        Glide.with(binding.photoview)
             .load(imgUrl)
-            .into(binding.imageView)
+            .into(binding.photoview)
 
-        binding.starBtn.setOnClickListener {
+        binding.starBtnOff.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+            binding.starBtnOff.visibility = View.GONE
+            binding.starBtnOn.visibility = View.VISIBLE
             DuckRepository.toggleLiked(item, sharedPref)
             isStarred = item.liked
-            binding.starBtn.setImageResource(when (item.liked) {
-                true -> android.R.drawable.btn_star_big_on
-                false -> android.R.drawable.btn_star_big_off
-            })
-            if (isStarred) {
-                view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-            }
-
+            view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         }
-        var scaleFactor = 1F
-        val initScaleX = binding.imageView.scaleX
-        val initScaleY = binding.imageView.scaleY
-
-        val scaleGestureDetector = ScaleGestureDetector(
-            requireActivity(),
-            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    scaleFactor *= detector.scaleFactor
-                    scaleFactor = scaleFactor.coerceIn(0.1f, 5.0f)
-
-                    binding.imageView.scaleType = ImageView.ScaleType.CENTER_CROP
-                    binding.imageView.scaleX = scaleFactor
-                    binding.imageView.scaleY = scaleFactor
-
-                    return super.onScale(detector)
-                }
-
-                override fun onScaleEnd(detector: ScaleGestureDetector) {
-                    binding.imageView.scaleX = initScaleX
-                    binding.imageView.scaleY = initScaleY
-                }
+        binding.starBtnOn.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+            binding.starBtnOn.visibility = View.GONE
+            binding.starBtnOff.visibility = View.VISIBLE
+            DuckRepository.toggleLiked(item, sharedPref)
+            isStarred = item.liked
+        }
+        binding.infoBtn.setOnClickListener {
+            if (binding.infoPopup.visibility == View.GONE) {
+                binding.infoPopup.visibility = View.VISIBLE
+            } else {
+                binding.infoPopup
             }
-        )
-        binding.imageView.setOnTouchListener { _, event ->
-            scaleGestureDetector.onTouchEvent(event)
+        }
+        binding.root.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
+        }
+        binding.photoview.setOnClickListener {
+            binding.infoPopup.visibility = View.GONE
         }
 
 
@@ -108,4 +98,5 @@ class SingleImageFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

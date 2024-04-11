@@ -18,4 +18,6 @@
     <string name="liked">Liked</string>
     <string name="you_have_no_liked_ducks">You have no liked Ducks</string>
     <string name="duck_duck_grid_icon">Duck Duck Grid Icon</string>
+    <string name="info_button">Info Button</string>
+    <string name="star_button">Star Button</string>
 </resources>
