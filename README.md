@@ -3,18 +3,20 @@ This Project is my playground for trying and learing about different Android Com
 
 ## Screenshots
 <div>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/2d81cd32-c7e2-407e-bd98-eef0e0a84d78 width=250>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/5e479dce-4688-48f2-88d0-fffbd84b8585 width=250>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/98ddbeab-90bb-45e0-85f5-f8bc3601c3a6 width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/f414457f-6c60-48a1-9e79-3145f04aa6a8 width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/34d3826c-bf7a-4bba-8f22-f7973c95b0d9 width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/1c47d502-c326-4d1b-84bd-b349cdfa5b4e width=250>
 
 </div>
 
 ## Notable features I implemented
 - Saving "liked" state of an image in SharedPreferences
-- pinching to change collumn count in the Grid- and LikedFragment
+- Pinching to change collumn count in the Grid- and LikedFragment
 - Bottom navigation using nav graph
-- getting random duck images from https://random-d.uk/api/v2/random and displaying them
+- Getting random duck images from https://random-d.uk/api/v2/random and displaying them
+- Showing images/gifs from the internet via glide
 - Showing all "liked" images in LikedFragment
 
 ## Dependencies
 - https://random-d.uk/api/v2/random for getting random duck Images
+- https://github.com/Baseflow/PhotoView
