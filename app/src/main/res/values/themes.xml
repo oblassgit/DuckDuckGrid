@@ -20,9 +20,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.GridViewTest.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.DuckDuckGrid.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.GridViewTest.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.DuckDuckGrid.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="Theme.DuckDuckGrid.Button" parent="Widget.AppCompat.ImageButton">
         <item name="android:tint">#676767</item>
     </style>

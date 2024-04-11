@@ -9,9 +9,8 @@
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photoview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,7 +27,8 @@
         android:backgroundTint="#00FFFFFF"
         android:src="@drawable/baseline_info_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/info_button" />
 
 
     <ImageButton
@@ -40,7 +40,8 @@
         android:backgroundTint="#00FFFFFF"
         android:src="@drawable/ic_star_off"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/star_button" />
 
     <ImageButton
         android:id="@+id/starBtnOn"
@@ -51,7 +52,8 @@
         android:backgroundTint="#00FFFFFF"
         android:src="@drawable/ic_star_on"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/star_button" />
 
 
 
