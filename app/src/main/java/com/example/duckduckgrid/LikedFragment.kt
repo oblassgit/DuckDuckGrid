@@ -86,6 +86,7 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                        recyclerViewSmall.bringToFront()
                     }.start()
 
 
@@ -100,6 +101,7 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerView.visibility = View.VISIBLE
+                        recyclerView.bringToFront()
                     }.start()
                     viewMode = ViewMode.BIG
                     Log.d("ViewMode", "BIG")
@@ -115,11 +117,13 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
 
         binding.recyclerView.setOnTouchListener { _, event ->
+            recyclerViewSmall.scrollToPosition((recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
             scaleGestureDetector.onTouchEvent(event)
             false
         }
 
         binding.recyclerViewSmall.setOnTouchListener { _, event ->
+            recyclerView.scrollToPosition((recyclerViewSmall.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
             scaleGestureDetector.onTouchEvent(event)
             false
         }
