@@ -123,7 +123,7 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         binding.recyclerViewSmall.setOnTouchListener { _, event ->
-            recyclerView.scrollToPosition((recyclerViewSmall.layoutManager as GridLayoutManager).findFirstCompletelyVisibleItemPosition())
+            recyclerView.scrollToPosition((recyclerViewSmall.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
             scaleGestureDetector.onTouchEvent(event)
             false
         }
