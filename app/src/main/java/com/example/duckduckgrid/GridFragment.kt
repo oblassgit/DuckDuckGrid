@@ -125,11 +125,13 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
 
         binding.recyclerView.setOnTouchListener { _, event ->
+            recyclerViewSmall.scrollToPosition((recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
             scaleGestureDetector.onTouchEvent(event)
             false
         }
 
         binding.recyclerViewSmall.setOnTouchListener { _, event ->
+            recyclerView.scrollToPosition((recyclerViewSmall.layoutManager as GridLayoutManager).findFirstCompletelyVisibleItemPosition())
             scaleGestureDetector.onTouchEvent(event)
             false
         }
