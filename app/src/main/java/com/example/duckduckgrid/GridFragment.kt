@@ -94,6 +94,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                        recyclerViewSmall.bringToFront()
                     }.start()
 
 
@@ -108,6 +109,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .alpha(0f)
                             .start()
                     }.withEndAction { recyclerView.visibility = View.VISIBLE
+                        recyclerView.bringToFront()
                     }.start()
                     viewMode = ViewMode.BIG
                     Log.d("ViewMode", "BIG")
@@ -131,6 +133,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             scaleGestureDetector.onTouchEvent(event)
             false
         }
+
 
         (binding.recyclerView.adapter as? RecyclerViewAdapter)?.setOnDuckClickListener(object :
             RecyclerViewAdapter.OnDuckClickListener {
