@@ -12,10 +12,18 @@ class DuckRepository {
         }
 
         private fun saveStarred(isStarred: Boolean, sharedPreferences: SharedPreferences, imgUrl: String?) {
-            with(sharedPreferences.edit()) {
-                putBoolean(imgUrl, isStarred)
-                commit()
+            if (isStarred) {
+                with(sharedPreferences.edit()) {
+                    putBoolean(imgUrl, isStarred)
+                    commit()
+                }
+            } else { //removing entries from shared prefs to save space
+                with(sharedPreferences.edit()) {
+                    remove(imgUrl)
+                    commit()
+                }
             }
+
         }
     }
 }
