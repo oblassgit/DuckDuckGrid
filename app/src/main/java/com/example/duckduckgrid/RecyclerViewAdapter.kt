@@ -1,11 +1,14 @@
 package com.example.duckduckgrid
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -69,6 +72,13 @@ class RecyclerViewAdapter :
 
         viewHolder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
+        }
+        viewHolder.imgView.setOnLongClickListener {
+            Toast.makeText(viewHolder.context, viewHolder.context.getString(R.string.toast_url_saved_to_clipboard), Toast.LENGTH_SHORT).show()
+            viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
+            val clip = ClipData.newPlainText("img url", item.url)
+            (viewHolder.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)
+            true
         }
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item)
