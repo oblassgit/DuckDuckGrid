@@ -13,7 +13,11 @@ class DuckRepository {
 
         private fun saveStarred(isStarred: Boolean, sharedPreferences: SharedPreferences, imgUrl: String?) {
             with(sharedPreferences.edit()) {
-                putBoolean(imgUrl, isStarred)
+                if (isStarred) {
+                    putBoolean(imgUrl, isStarred)
+                } else {
+                    remove(imgUrl)
+                }
                 commit()
             }
         }
