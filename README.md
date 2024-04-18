@@ -16,6 +16,7 @@ This Project is my playground for trying and learing about different Android Com
 - Getting random duck images from https://random-d.uk/api/v2/random and displaying them
 - Showing images/gifs from the internet via glide
 - Showing all "liked" images in LikedFragment
+- Saving the image url of an item in the GridFragment to the Clipboard and showing a toast
 
 ## Dependencies
 - https://random-d.uk/api/v2/random for getting random duck Images
