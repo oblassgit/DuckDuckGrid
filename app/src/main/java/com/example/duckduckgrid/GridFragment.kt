@@ -1,5 +1,6 @@
 package com.example.duckduckgrid
 
+import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,11 +9,14 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -51,6 +55,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGridBinding.inflate(inflater, container, false)
+        binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(R.attr.colorPrimary))
+        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(R.attr.colorBackground))
 
         val recyclerViewAdapter = RecyclerViewAdapter()
 
@@ -267,5 +273,15 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             viewModel.addItem()
         }
 
+    }
+
+    @ColorInt
+    fun Context.getColorFromAttr(
+        @AttrRes attrColor: Int,
+        typedValue: TypedValue = TypedValue(),
+        resolveRefs: Boolean = true
+    ): Int {
+        theme.resolveAttribute(attrColor, typedValue, resolveRefs)
+        return typedValue.data
     }
 }
