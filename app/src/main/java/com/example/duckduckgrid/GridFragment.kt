@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,7 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 class GridFragment : Fragment(), CoroutineScope by MainScope() {
-    
+
     private var _binding: FragmentGridBinding? = null
     private val binding get() = _binding!!
 
@@ -34,7 +38,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     private val SMALL_MAX_SCALE_FACTOR = 1.25f
 
     private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DuckRepository.sharedPreferences = sharedPreferences
@@ -78,9 +81,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         fab.setOnClickListener {
-            viewModel.addItem()
+            addItem()
         }
-
 
 
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -93,7 +95,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .scaleX(SMALL_MAX_SCALE_FACTOR)
                             .alpha(0f)
                             .start()
-                    }.withEndAction { recyclerViewSmall.visibility = View.VISIBLE
+                    }.withEndAction {
+                        recyclerViewSmall.visibility = View.VISIBLE
                         recyclerViewSmall.bringToFront()
                     }.start()
 
@@ -108,7 +111,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                             .scaleX(SMALL_MAX_SCALE_FACTOR)
                             .alpha(0f)
                             .start()
-                    }.withEndAction { recyclerView.visibility = View.VISIBLE
+                    }.withEndAction {
+                        recyclerView.visibility = View.VISIBLE
                         recyclerView.bringToFront()
                     }.start()
                     viewMode = ViewMode.BIG
@@ -193,7 +197,12 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             (binding.recyclerViewSmall.adapter as? RecyclerViewAdapter)?.submitList(itemList)
         }
 
-        viewModel.loadItems()
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            loadItems()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
+        loadItems()
 
         return binding.root
     }
@@ -201,7 +210,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        viewModel.loadItems()
+        loadItems()
     }
 
     override fun onAttach(context: Context) {
@@ -215,5 +224,48 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val conectivityManager: ConnectivityManager = context?.getSystemService()!!
+        return conectivityManager.getNetworkCapabilities(conectivityManager.activeNetwork)
+            .isNetworkCapabilitiesValid()
+    }
+
+    private fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
+        this == null -> false
+        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+                (hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        hasTransport(NetworkCapabilities.TRANSPORT_VPN) ||
+                        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                        hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) -> true
+
+        else -> false
+    }
+
+    private fun loadItems() {
+        if (!isNetworkAvailable()) {
+            Toast.makeText(
+                requireContext(),
+                "No active Internet connection available",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            viewModel.loadItems()
+        }
+    }
+
+    private fun addItem() {
+        if (!isNetworkAvailable()) {
+            Toast.makeText(
+                requireContext(),
+                "No active Internet connection available",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            viewModel.addItem()
+        }
+
     }
 }
