@@ -1,5 +1,8 @@
+<img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/244bac5c-4c60-425c-91af-43e79579183a width=150>
+
 # Duck Duck Grid
 This Project is my playground for trying and learing about different Android Components.
+
 
 ## Screenshots
 <div>
