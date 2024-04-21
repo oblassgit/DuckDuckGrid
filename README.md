@@ -6,9 +6,9 @@ This Project is my playground for trying and learing about different Android Com
 
 ## Screenshots
 <div>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/f414457f-6c60-48a1-9e79-3145f04aa6a8 width=250>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/34d3826c-bf7a-4bba-8f22-f7973c95b0d9 width=250>
-  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/1c47d502-c326-4d1b-84bd-b349cdfa5b4e width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/0118b172-058c-443e-89c5-d467b9329a90 width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/ad994d37-5ade-4fe6-846f-da050d48ed6a width=250>
+  <img src=https://github.com/oblassgit/DuckDuckGrid/assets/114983621/e0c37655-c538-4e6b-a578-2b10a7f4d4e8 width=250>
 
 </div>
 
