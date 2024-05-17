@@ -13,8 +13,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.duckduckgrid.databinding.FragmentLikedBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -56,10 +57,14 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         recyclerViewSmall.adapter = recyclerViewAdapter
 
         recyclerView.layoutManager =
-            GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
+            StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
 
         recyclerViewSmall.layoutManager =
-            GridLayoutManager(activity, 3, GridLayoutManager.VERTICAL, false)
+            StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+            }
 
         when (viewMode) {
             ViewMode.BIG -> {
@@ -117,13 +122,19 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         val scaleGestureDetector = ScaleGestureDetector(requireActivity(), listener)
 
         binding.recyclerView.setOnTouchListener { _, event ->
-            recyclerViewSmall.scrollToPosition((recyclerView.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
+            var array = intArrayOf(0,0)
+            val position = ((recyclerView.layoutManager as StaggeredGridLayoutManager).findFirstVisibleItemPositions(array)[0])
+
+            recyclerViewSmall.scrollToPosition(position)
             scaleGestureDetector.onTouchEvent(event)
             false
         }
 
         binding.recyclerViewSmall.setOnTouchListener { _, event ->
-            recyclerView.scrollToPosition((recyclerViewSmall.layoutManager as GridLayoutManager).findFirstVisibleItemPosition())
+            var array = intArrayOf(0,0)
+            val position = ((recyclerViewSmall.layoutManager as StaggeredGridLayoutManager).findFirstVisibleItemPositions(array)[0])
+
+            recyclerView.scrollToPosition(position)
             scaleGestureDetector.onTouchEvent(event)
             false
         }
