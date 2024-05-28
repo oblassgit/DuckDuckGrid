@@ -20,42 +20,31 @@
     <ImageButton
         android:theme="@style/Theme.DuckDuckGrid.Button"
         android:id="@+id/infoBtn"
-        android:layout_width="53dp"
-        android:layout_height="40dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="24dp"
         android:backgroundTint="#00FFFFFF"
         android:src="@drawable/baseline_info_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/info_button" />
+        android:contentDescription="@string/info_button"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
 
     <ImageButton
-        android:id="@+id/starBtnOff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="22dp"
-        android:layout_marginBottom="22dp"
+        android:id="@+id/starBtn"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:backgroundTint="#00FFFFFF"
-        android:src="@drawable/ic_star_off"
+        android:src="@drawable/star_statelistdrawable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/star_button" />
-
-    <ImageButton
-        android:id="@+id/starBtnOn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="22dp"
-        android:layout_marginBottom="22dp"
-        android:backgroundTint="#00FFFFFF"
-        android:src="@drawable/ic_star_on"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/star_button" />
-
-
+        android:contentDescription="@string/star_button"
+        android:visibility="visible"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/infoPopup"

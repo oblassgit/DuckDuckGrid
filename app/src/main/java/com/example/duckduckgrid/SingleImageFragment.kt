@@ -3,14 +3,12 @@ package com.example.duckduckgrid
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -28,7 +26,6 @@ class SingleImageFragment : Fragment() {
     private val binding get() = _binding!!
 
     @SuppressLint("ClickableViewAccessibility", "ResourceType")
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,16 +38,16 @@ class SingleImageFragment : Fragment() {
         val item = args.item
 
 
-        var isStarred = sharedPref.getBoolean(imgUrl, false)
-        if (isStarred) {
-            binding.starBtnOn.visibility = View.VISIBLE
-            binding.starBtnOff.visibility = View.GONE
-            item.liked = true
+        var favouriteState = if (item.liked) {
+            R.attr.state_liked
         } else {
-            binding.starBtnOn.visibility = View.GONE
-            binding.starBtnOff.visibility = View.VISIBLE
-            item.liked = false
+            -R.attr.state_liked
         }
+        binding.starBtn.setImageState(
+            intArrayOf(favouriteState),
+            true
+        )
+
 
 
         Log.d("DateAndUrl", "$imgUrl $date")
@@ -61,26 +58,26 @@ class SingleImageFragment : Fragment() {
             .load(imgUrl)
             .into(binding.photoview)
 
-        binding.starBtnOff.setOnClickListener {
+        binding.starBtn.setOnClickListener {
             binding.infoPopup.visibility = View.GONE
-            binding.starBtnOff.visibility = View.GONE
-            binding.starBtnOn.visibility = View.VISIBLE
-            DuckRepository.toggleLiked(item, sharedPref)
-            isStarred = item.liked
-            view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-        }
-        binding.starBtnOn.setOnClickListener {
-            binding.infoPopup.visibility = View.GONE
-            binding.starBtnOn.visibility = View.GONE
-            binding.starBtnOff.visibility = View.VISIBLE
-            DuckRepository.toggleLiked(item, sharedPref)
-            isStarred = item.liked
+            favouriteState = if (item.liked) {
+                -R.attr.state_liked
+            } else {
+                R.attr.state_liked
+            }
+            binding.starBtn.setImageState(
+                intArrayOf(favouriteState),
+                true
+            )
+            if (!item.liked) {view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)}
+
+            DuckRepository.setLikedState(item, sharedPref, !item.liked)
         }
         binding.infoBtn.setOnClickListener {
             if (binding.infoPopup.visibility == View.GONE) {
                 binding.infoPopup.visibility = View.VISIBLE
             } else {
-                binding.infoPopup
+                binding.infoPopup.visibility = View.GONE
             }
         }
         binding.root.setOnClickListener {

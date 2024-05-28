@@ -6,8 +6,8 @@ class DuckRepository {
     companion object {
         lateinit var sharedPreferences: SharedPreferences
 
-        fun toggleLiked(item: Item, sharedPreferences: SharedPreferences) {
-            item.liked = !item.liked
+        fun setLikedState(item: Item, sharedPreferences: SharedPreferences, likedState: Boolean) {
+            item.liked = likedState
             saveStarred(item.liked, sharedPreferences, item.url)
         }
 

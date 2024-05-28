@@ -32,15 +32,13 @@ class RecyclerViewAdapter :
     class ViewHolder(binding: GridItemBinding, val context: Context) :
         RecyclerView.ViewHolder(binding.root) {
         val imgView: ImageView
-        val starBtnOff: ImageButton
-        val starBtnOn: ImageButton
+        val starBtn: ImageButton
         val itemBinding: GridItemBinding
 
             init {
                 // Define click listener for the ViewHolder's View
                 imgView = binding.imgView
-                starBtnOff = binding.starImgBtn
-                starBtnOn = binding.starImgBtnActive
+                starBtn = binding.starImgBtn
                 itemBinding = binding
             }
 
@@ -64,9 +62,20 @@ class RecyclerViewAdapter :
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
+        item.liked = DuckRepository.sharedPreferences.getBoolean(item.url, false)
         Glide.with(viewHolder.imgView.context)
             .load(item.url)
             .into(viewHolder.imgView)
+
+        var favouriteState = if (item.liked) {
+            R.attr.state_liked
+        } else {
+            -R.attr.state_liked
+        }
+        viewHolder.starBtn.setImageState(
+            intArrayOf(favouriteState),
+            true
+        )
 
 
 
@@ -83,27 +92,26 @@ class RecyclerViewAdapter :
         viewHolder.imgView.setOnClickListener {
             onClickListener?.onClick(position, item)
         }
-        var isStarred = item.liked
-        item.liked = isStarred
         viewHolder.itemBinding.item = item
 
 
         //2 onclick listeners because of switching between two buttons to achieve different button images
-        viewHolder.starBtnOff.setOnClickListener {
+        viewHolder.starBtn.setOnClickListener {
+            favouriteState = if (item.liked) {
+                -R.attr.state_liked
+            } else {
+                R.attr.state_liked
+            }
+            viewHolder.starBtn.setImageState(
+                intArrayOf(favouriteState),
+                true
+            )
             item?.let {
-                onClickListener?.starDuck(item, true)
+                onClickListener?.starDuck(item, !item.liked)
             }
             viewHolder.itemBinding.item = item
-            viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
         }
 
-        viewHolder.starBtnOn.setOnClickListener {
-            //DuckRepository.toggleLiked(item, sharedPref)
-            item?.let {
-                onClickListener?.starDuck(it, false)
-            }
-            viewHolder.itemBinding.item = item
-        }
 
     }
 

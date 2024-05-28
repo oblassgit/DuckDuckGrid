@@ -4,12 +4,12 @@ import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -164,7 +164,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun starDuck(item: Item, shouldStar: Boolean) {
-                DuckRepository.toggleLiked(item, sharedPreferences)
+                if (shouldStar) {view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)}
+                DuckRepository.setLikedState(item, sharedPreferences, shouldStar)
                 item.url?.let {
                     viewModel.starItem(it, shouldStar)
                 }
@@ -188,7 +189,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun starDuck(item: Item, shouldStar: Boolean) {
-                DuckRepository.toggleLiked(item, sharedPreferences)
+                if (shouldStar) {view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)}
+                DuckRepository.setLikedState(item, sharedPreferences, shouldStar)
                 item.url?.let {
                     viewModel.starItem(it, shouldStar)
                 }
@@ -211,12 +213,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         loadItems()
 
         return binding.root
-    }
-
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        loadItems()
     }
 
     override fun onAttach(context: Context) {
@@ -257,6 +253,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 "No active Internet connection available",
                 Toast.LENGTH_SHORT
             ).show()
+            view?.performHapticFeedback(HapticFeedbackConstants.REJECT)
         } else {
             viewModel.loadItems()
         }
@@ -269,6 +266,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 "No active Internet connection available",
                 Toast.LENGTH_SHORT
             ).show()
+            view?.performHapticFeedback(HapticFeedbackConstants.REJECT)
         } else {
             viewModel.addItem()
         }

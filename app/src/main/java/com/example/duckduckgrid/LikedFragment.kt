@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -145,7 +146,8 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun starDuck(item: Item, shouldStar: Boolean) {
-                DuckRepository.toggleLiked(item, sharedPreferences)
+                if (shouldStar) {view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)}
+                DuckRepository.setLikedState(item, sharedPreferences, shouldStar)
                 item.url?.let {
                     viewModel.starItem(it, shouldStar)
                 }
@@ -169,7 +171,8 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun starDuck(item: Item, shouldStar: Boolean) {
-                DuckRepository.toggleLiked(item, sharedPreferences)
+                if (shouldStar) {view?.performHapticFeedback(HapticFeedbackConstants.CONFIRM)}
+                DuckRepository.setLikedState(item, sharedPreferences, shouldStar)
                 item.url?.let {
                     viewModel.starItem(it, shouldStar)
                 }
