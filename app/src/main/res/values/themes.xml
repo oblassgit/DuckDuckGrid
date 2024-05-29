@@ -26,4 +26,14 @@
     <style name="Theme.DuckDuckGrid.Button" parent="Widget.AppCompat.ImageButton">
         <item name="android:tint">#676767</item>
     </style>
+
+    <style name="CustomShowcaseViewTheme" parent="ShowcaseView.Light">
+        <item name="sv_backgroundColor">#B3FFFFFF</item>
+        <item name="sv_titleTextAppearance">@style/CustomTitle</item>
+
+    </style>
+
+    <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
 </resources>
