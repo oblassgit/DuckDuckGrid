@@ -43,9 +43,12 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
     private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
 
+    private val recyclerViewAdapter = RecyclerViewAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         DuckRepository.sharedPreferences = sharedPreferences
         super.onCreate(savedInstanceState)
+        loadItems()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -57,8 +60,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         _binding = FragmentGridBinding.inflate(inflater, container, false)
         binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(R.attr.colorPrimary))
         binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(R.attr.colorBackground))
-
-        val recyclerViewAdapter = RecyclerViewAdapter()
 
         val recyclerView: RecyclerView = binding.recyclerView
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
@@ -89,6 +90,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         fab.setOnClickListener {
             addItem()
         }
+        loadItems()
 
 
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -208,8 +210,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        loadItems()
-
         return binding.root
     }
 
@@ -223,8 +223,9 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         super.onAttach(context)
         activity?.let {
             viewModel.initItems()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
-
+        loadItems()
     }
 
     override fun onDestroyView() {
@@ -259,6 +260,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             ).show()
         } else {
             viewModel.loadItems()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
@@ -271,6 +273,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             ).show()
         } else {
             viewModel.addItem()
+            recyclerViewAdapter.notifyItemInserted(0)
         }
 
     }
