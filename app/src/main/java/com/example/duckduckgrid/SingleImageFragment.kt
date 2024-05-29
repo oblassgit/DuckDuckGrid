@@ -112,7 +112,7 @@ class SingleImageFragment : Fragment(), OnClickListener {
             .setOnClickListener(this)
             .singleShot(41)
             .setStyle(R.style.CustomShowcaseViewTheme)
-            .setContentTitle("Add Ducks")
+            .setContentTitle("Pinch to zoom")
             .build()
         showcaseView.setButtonPosition(lps)
 
@@ -130,12 +130,12 @@ class SingleImageFragment : Fragment(), OnClickListener {
         when (counter) {
             0 -> {
                 showcaseView.setShowcase(ViewTarget(binding.starBtnOff), true)
-                showcaseView.setContentTitle("Like Ducks")
+                showcaseView.setContentTitle("Like the duck")
             }
 
             1 -> {
                 showcaseView.setShowcase(ViewTarget(binding.infoBtn), true)
-                showcaseView.setContentTitle("View Liked Ducks")
+                showcaseView.setContentTitle("Get info about the duck")
                 showcaseView.setButtonText("Done")
             }
             2 -> {
