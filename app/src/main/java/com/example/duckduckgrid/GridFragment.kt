@@ -46,9 +46,9 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        loadItems()
         DuckRepository.sharedPreferences = sharedPreferences
         super.onCreate(savedInstanceState)
-        loadItems()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -57,6 +57,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        loadItems()
         _binding = FragmentGridBinding.inflate(inflater, container, false)
         binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(R.attr.colorPrimary))
         binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(R.attr.colorBackground))
@@ -88,6 +89,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         fab.setOnClickListener {
+            recyclerView.scrollToPosition(0)
+            recyclerViewSmall.scrollToPosition(0)
             addItem()
         }
         loadItems()
@@ -198,7 +201,18 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         })
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
-            (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
+            // (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
+            var idx = 0
+            for (i in itemList) {
+                val item = i as? Item
+                item?.let { item ->
+                    if (!item.url.equals(item.lastCheckedUrl)) {
+                        binding.recyclerView.adapter?.notifyItemChanged(idx);
+                        item.lastCheckedUrl = item.url
+                    }
+                }
+                idx++
+            }
         }
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->

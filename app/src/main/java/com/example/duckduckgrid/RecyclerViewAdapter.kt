@@ -23,7 +23,10 @@ class RecyclerViewAdapter :
         }
 
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            return oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
+            if (oldItem.url != newItem.url) {
+                return false
+            }
+            return true //: Ask Gustavo what i should do here. My implementation doesn't work
         }
     }) {
 
