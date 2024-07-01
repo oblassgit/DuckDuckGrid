@@ -202,16 +202,14 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
             // (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
-            var idx = 0
-            for (i in itemList) {
-                val item = i as? Item
+            for ((i, item) in itemList.withIndex()) {
+                val item = item as? Item
                 item?.let { item ->
                     if (!item.url.equals(item.lastCheckedUrl)) {
-                        binding.recyclerView.adapter?.notifyItemChanged(idx);
+                        binding.recyclerView.adapter?.notifyItemChanged(i)
                         item.lastCheckedUrl = item.url
                     }
                 }
-                idx++
             }
         }
 
