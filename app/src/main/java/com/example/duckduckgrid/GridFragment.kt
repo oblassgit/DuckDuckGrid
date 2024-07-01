@@ -43,7 +43,10 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
     private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
 
+    private val recyclerViewAdapter = RecyclerViewAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        loadItems()
         DuckRepository.sharedPreferences = sharedPreferences
         super.onCreate(savedInstanceState)
     }
@@ -54,11 +57,10 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        loadItems()
         _binding = FragmentGridBinding.inflate(inflater, container, false)
         binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(R.attr.colorPrimary))
         binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(R.attr.colorBackground))
-
-        val recyclerViewAdapter = RecyclerViewAdapter()
 
         val recyclerView: RecyclerView = binding.recyclerView
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
@@ -87,8 +89,11 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         }
 
         fab.setOnClickListener {
+            recyclerView.scrollToPosition(0)
+            recyclerViewSmall.scrollToPosition(0)
             addItem()
         }
+        loadItems()
 
 
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -196,7 +201,16 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         })
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
-            (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
+            // (binding.recyclerView.adapter as? RecyclerViewAdapter)?.submitList(itemList)
+            for ((i, item) in itemList.withIndex()) {
+                val item = item as? Item
+                item?.let { item ->
+                    if (!item.url.equals(item.lastCheckedUrl)) {
+                        binding.recyclerView.adapter?.notifyItemChanged(i)
+                        item.lastCheckedUrl = item.url
+                    }
+                }
+            }
         }
 
         viewModel.itemList.observe(viewLifecycleOwner) { itemList ->
@@ -207,8 +221,6 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             loadItems()
             binding.swipeRefreshLayout.isRefreshing = false
         }
-
-        loadItems()
 
         return binding.root
     }
@@ -223,8 +235,9 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         super.onAttach(context)
         activity?.let {
             viewModel.initItems()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
-
+        loadItems()
     }
 
     override fun onDestroyView() {
@@ -259,6 +272,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             ).show()
         } else {
             viewModel.loadItems()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
@@ -271,6 +285,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             ).show()
         } else {
             viewModel.addItem()
+            recyclerViewAdapter.notifyItemInserted(0)
         }
 
     }

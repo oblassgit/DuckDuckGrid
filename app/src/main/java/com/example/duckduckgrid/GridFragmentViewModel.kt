@@ -19,6 +19,7 @@ import java.util.UUID
 @Parcelize
 data class Item(
     var url: String? = null,
+    var lastCheckedUrl: String? = null,
     var date: String? = null,
     val id: UUID = UUID.randomUUID(),
     var liked: Boolean = false

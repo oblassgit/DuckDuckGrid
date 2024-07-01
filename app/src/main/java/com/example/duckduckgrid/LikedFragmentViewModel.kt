@@ -37,7 +37,7 @@ class LikedFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
         all.forEach{ i ->
         if ((i.value as Boolean)) {
             val date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
-            _itemList.value?.add(Item(i.key, date, UUID.randomUUID(), true))
+            _itemList.value?.add(Item(i.key, null,date, UUID.randomUUID(), true))
 
             }
         }
