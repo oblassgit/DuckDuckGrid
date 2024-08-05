@@ -9,15 +9,22 @@ import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.duckduckgrid.databinding.FragmentSingleImageBinding
+import com.github.amlcurran.showcaseview.ShowcaseView
+import com.github.amlcurran.showcaseview.targets.ViewTarget
 
 
-class SingleImageFragment : Fragment() {
+class SingleImageFragment : Fragment(), OnClickListener {
+
+    private lateinit var showcaseView: ShowcaseView
+    private var counter = 0
 
     private var _binding: FragmentSingleImageBinding? = null
     private val args: SingleImageFragmentArgs by navArgs()
@@ -90,6 +97,25 @@ class SingleImageFragment : Fragment() {
             binding.infoPopup.visibility = View.GONE
         }
 
+        val lps = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+        lps.addRule(RelativeLayout.CENTER_HORIZONTAL)
+        lps.bottomMargin = ((resources.displayMetrics.density * 60) as Number).toInt()
+
+        showcaseView = ShowcaseView.Builder(requireActivity())
+            .setTarget(ViewTarget(binding.photoview))
+            .withMaterialShowcase()
+            .blockAllTouches()
+            .setOnClickListener(this)
+            .singleShot(41)
+            .setStyle(R.style.CustomShowcaseViewTheme)
+            .setContentTitle("Pinch to zoom")
+            .build()
+        showcaseView.setButtonPosition(lps)
+
 
         return binding.root
     }
@@ -97,6 +123,26 @@ class SingleImageFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        showcaseView.hide()
+    }
+
+    override fun onClick(v: View?) {
+        when (counter) {
+            0 -> {
+                showcaseView.setShowcase(ViewTarget(binding.starBtnOff), true)
+                showcaseView.setContentTitle("Like the duck")
+            }
+
+            1 -> {
+                showcaseView.setShowcase(ViewTarget(binding.infoBtn), true)
+                showcaseView.setContentTitle("Get info about the duck")
+                showcaseView.setButtonText("Done")
+            }
+            2 -> {
+                showcaseView.hide()
+            }
+        }
+        counter++
     }
 
 }

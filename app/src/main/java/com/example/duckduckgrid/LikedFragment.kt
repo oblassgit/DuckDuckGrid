@@ -34,6 +34,9 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
 
     private var viewMode: ViewMode = ViewMode.DEFAULT_VIEW_MODE
 
+    private val recyclerViewAdapter = RecyclerViewAdapter()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DuckRepository.sharedPreferences = sharedPreferences
@@ -47,8 +50,6 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLikedBinding.inflate(inflater, container, false)
-
-        val recyclerViewAdapter = RecyclerViewAdapter()
 
         val recyclerView: RecyclerView = binding.recyclerView
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
@@ -207,6 +208,7 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         super.onAttach(context)
         activity?.let {
             viewModel.initItems()
+            recyclerViewAdapter.notifyDataSetChanged()
         }
 
     }
