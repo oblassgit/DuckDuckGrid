@@ -20,7 +20,9 @@ This repository is my playground for trying and for learning about different And
 - Showing images/gifs from the internet via glide
 - Showing all "liked" images in LikedFragment
 - Saving the image url of an item in the GridFragment to the Clipboard and showing a toast
+- App Tutorial with ShowcaseView
 
 ## Dependencies
 - https://random-d.uk/api/v2/random for getting random duck Images
 - https://github.com/Baseflow/PhotoView
+- https://github.com/amlcurran/ShowcaseView
