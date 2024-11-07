@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .singleShot(42)
             .build()
         showcaseView.setButtonPosition(lps)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

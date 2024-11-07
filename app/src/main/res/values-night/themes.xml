@@ -5,14 +5,15 @@
         <item name="colorPrimary">@color/yellow_400</item>
         <item name="colorPrimaryVariant">@color/orange_500</item>
         <item name="colorOnPrimary">@color/black</item>
+        <item name="colorAccent">@color/orange_200</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_800</item>
+        <item name="colorSecondary">@color/pastel_blue</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="background">@color/black</item>
+        <item name="background">@color/dark_grey</item>
     </style>
     <style name="Theme.DuckDuckGrid.Button" parent="Widget.AppCompat.ImageButton">
         <item name="android:tint">#ADADAD</item>
@@ -24,5 +25,10 @@
 
     <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">
         <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="CustomFab">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30%</item>
     </style>
 </resources>
