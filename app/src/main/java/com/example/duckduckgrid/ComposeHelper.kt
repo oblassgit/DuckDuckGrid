@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.example.duckduckgrid.ui.theme.AppTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -41,21 +43,17 @@ import java.io.IOException
 import java.net.URL
 
 
-lateinit var hideModalBottomSheet: () -> Unit
-lateinit var showModalBottomSheet: () -> Unit
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean): Boolean {
+fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean, stateFlow: MutableStateFlow<Boolean>): Boolean {
+
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    showModalBottomSheet = {
-        scope.launch { sheetState.partialExpand() }
-    }
-    hideModalBottomSheet = { scope.launch { sheetState.hide()} }
+    val visibilityState = stateFlow.collectAsState(false)
+    val showBottomSheet by remember { visibilityState }
 
-    var showBottomSheet by remember { mutableStateOf(true) }
     var isFavourite by remember { mutableStateOf(_isFavourite) }
+
 
 
     AppTheme {
@@ -64,7 +62,10 @@ fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean): Boolean {
                 onDismissRequest = {
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
-                            showBottomSheet = false
+                            scope.launch {
+                                stateFlow.emit(false)
+
+                            }
                         }
                     }
                 },

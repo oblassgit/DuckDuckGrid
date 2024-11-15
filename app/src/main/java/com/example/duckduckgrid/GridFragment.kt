@@ -26,6 +26,8 @@ import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import java.net.URL
 
 class GridFragment : Fragment(), CoroutineScope by MainScope() {
@@ -69,6 +71,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         recyclerViewSmall.adapter = recyclerViewAdapter
 
         val fab: FloatingActionButton = binding.addDuckBtn
+
+        val bottomSheetVisibilityFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
         recyclerView.layoutManager =
             GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
@@ -170,17 +174,21 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun onLongClick(position: Int, item: Item) {
-                var shouldStar = false
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
                 binding.composeView.setContent {
-                    shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked)
-                    showModalBottomSheet
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
+                    if (item.liked != shouldStar) {
+                        binding.recyclerView.adapter?.notifyItemChanged(position)
+                    }
+                    item?.let {
+                        starDuck(item, shouldStar)
+                    }
                 }
-                if (item.liked != shouldStar) {
-                    binding.recyclerView.adapter?.notifyItemChanged(position)
-                }
-                item?.let {
-                    starDuck(item, shouldStar)
-                }
+
             }
 
             override fun starDuck(item: Item, shouldStar: Boolean) {
@@ -208,9 +216,15 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             }
 
             override fun onLongClick(position: Int, item: Item) {
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
+
                 binding.composeView.setContent {
-                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked)
-                    showModalBottomSheet
+
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
                     if (item.liked != shouldStar) {
                         binding.recyclerViewSmall.adapter?.notifyItemChanged(position)
                     }
