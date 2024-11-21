@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -41,7 +43,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,15 +75,7 @@ fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean, stateFlow: Mu
                 // Sheet content
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    /*Button(onClick = {
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) {
-                                showBottomSheet = false
-                            }
-                        }
-                    }) {
-                        Text("Hide bottom sheet")
-                    }*/
+
 
 
                     Button(onClick = {
@@ -140,7 +133,7 @@ fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean, stateFlow: Mu
                         .height(Dp(50f))) {
                         Image(painter = rememberVectorPainter(image = Icons.Rounded.Share), contentDescription = "Share", Modifier.height(
                             Dp(26f)
-                        ))
+                        ), colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary))
                     }
                 }
 
@@ -154,7 +147,7 @@ fun bottomSheet(url: URL, context: Context, _isFavourite: Boolean, stateFlow: Mu
 
 private fun saveImage(bitmap: Bitmap, context: Context): Uri? {
     //TODO - Should be processed in another thread
-    val imagesFolder: File = File(context.filesDir, "images")
+    val imagesFolder = File(context.filesDir, "images")
 
     var uri: Uri? = null
     try {
