@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.duckduckgrid.databinding.FragmentLikedBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import java.net.URL
 
 class LikedFragment : Fragment(), CoroutineScope by MainScope() {
 
@@ -55,6 +58,9 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
         recyclerView.adapter = recyclerViewAdapter
         recyclerViewSmall.adapter = recyclerViewAdapter
+
+        val bottomSheetVisibilityFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
 
         recyclerView.layoutManager =
             GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
@@ -145,6 +151,23 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
                 }
             }
 
+            override fun onLongClick(position: Int, item: Item) {
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
+                binding.composeView.setContent {
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
+                    if (item.liked != shouldStar) {
+                        binding.recyclerView.adapter?.notifyItemChanged(position)
+                    }
+                    item?.let {
+                        starDuck(item, shouldStar)
+                    }
+                }
+            }
+
             override fun starDuck(item: Item, shouldStar: Boolean) {
                 DuckRepository.toggleLiked(item, sharedPreferences)
                 item.url?.let {
@@ -166,6 +189,23 @@ class LikedFragment : Fragment(), CoroutineScope by MainScope() {
                             item
                         )
                     )
+                }
+            }
+
+            override fun onLongClick(position: Int, item: Item) {
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
+                binding.composeView.setContent {
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
+                    if (item.liked != shouldStar) {
+                        binding.recyclerViewSmall.adapter?.notifyItemChanged(position)
+                    }
+                    item?.let {
+                        starDuck(item, shouldStar)
+                    }
                 }
             }
 

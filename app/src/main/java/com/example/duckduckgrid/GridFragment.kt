@@ -1,6 +1,5 @@
 package com.example.duckduckgrid
 
-import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -27,6 +26,9 @@ import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import java.net.URL
 
 class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
@@ -45,6 +47,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
     private val recyclerViewAdapter = RecyclerViewAdapter()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         loadItems()
         DuckRepository.sharedPreferences = sharedPreferences
@@ -59,8 +62,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     ): View {
         loadItems()
         _binding = FragmentGridBinding.inflate(inflater, container, false)
-        binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(R.attr.colorPrimary))
-        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(R.attr.colorBackground))
+        binding.swipeRefreshLayout.setColorSchemeColors(requireContext().getColorFromAttr(com.google.android.material.R.attr.colorPrimary))
+        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(requireContext().getColorFromAttr(com.google.android.material.R.attr.colorButtonNormal))
 
         val recyclerView: RecyclerView = binding.recyclerView
         val recyclerViewSmall: RecyclerView = binding.recyclerViewSmall
@@ -68,6 +71,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
         recyclerViewSmall.adapter = recyclerViewAdapter
 
         val fab: FloatingActionButton = binding.addDuckBtn
+
+        val bottomSheetVisibilityFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
         recyclerView.layoutManager =
             GridLayoutManager(activity, 2, GridLayoutManager.VERTICAL, false)
@@ -168,6 +173,24 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 }
             }
 
+            override fun onLongClick(position: Int, item: Item) {
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
+                binding.composeView.setContent {
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
+                    if (item.liked != shouldStar) {
+                        binding.recyclerView.adapter?.notifyItemChanged(position)
+                    }
+                    item?.let {
+                        starDuck(item, shouldStar)
+                    }
+                }
+
+            }
+
             override fun starDuck(item: Item, shouldStar: Boolean) {
                 DuckRepository.toggleLiked(item, sharedPreferences)
                 item.url?.let {
@@ -192,6 +215,25 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 }
             }
 
+            override fun onLongClick(position: Int, item: Item) {
+                launch {
+                    bottomSheetVisibilityFlow.emit(true)
+
+                }
+
+                binding.composeView.setContent {
+
+                    val shouldStar = bottomSheet(URL(item.url), requireContext(), item.liked, bottomSheetVisibilityFlow)
+
+                    if (item.liked != shouldStar) {
+                        binding.recyclerViewSmall.adapter?.notifyItemChanged(position)
+                    }
+                    item?.let {
+                        starDuck(item, shouldStar)
+                    }
+                }
+            }
+
             override fun starDuck(item: Item, shouldStar: Boolean) {
                 DuckRepository.toggleLiked(item, sharedPreferences)
                 item.url?.let {
@@ -206,7 +248,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 val item = item as? Item
                 item?.let { item ->
                     if (!item.url.equals(item.lastCheckedUrl)) {
-                        binding.recyclerView.adapter?.notifyItemChanged(i)
+                        binding.recyclerViewSmall.adapter?.notifyItemChanged(i)
                         item.lastCheckedUrl = item.url
                     }
                 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -23,7 +24,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var showcaseView: ShowcaseView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -57,7 +61,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             .singleShot(42)
             .build()
         showcaseView.setButtonPosition(lps)
-
     }
 
     override fun onSupportNavigateUp(): Boolean {

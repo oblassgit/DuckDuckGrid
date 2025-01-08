@@ -1,14 +1,12 @@
 package com.example.duckduckgrid
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.Toast
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -23,10 +21,7 @@ class RecyclerViewAdapter :
         }
 
         override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-            if (oldItem.url != newItem.url) {
-                return false
-            }
-            return true //: Ask Gustavo what i should do here. My implementation doesn't work
+            return oldItem.url == newItem.url //: Ask Gustavo what i should do here. My implementation doesn't work
         }
     }) {
 
@@ -39,7 +34,7 @@ class RecyclerViewAdapter :
         val starBtnOn: ImageButton
         val itemBinding: GridItemBinding
 
-            init {
+        init {
                 // Define click listener for the ViewHolder's View
                 imgView = binding.imgView
                 starBtnOff = binding.starImgBtn
@@ -65,6 +60,7 @@ class RecyclerViewAdapter :
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
         Glide.with(viewHolder.imgView.context)
@@ -76,11 +72,14 @@ class RecyclerViewAdapter :
         viewHolder.itemView.setOnClickListener {
             onClickListener?.onClick(position, item)
         }
+
         viewHolder.imgView.setOnLongClickListener {
-            Toast.makeText(viewHolder.context, viewHolder.context.getString(R.string.toast_url_saved_to_clipboard), Toast.LENGTH_SHORT).show()
+            onClickListener?.onLongClick(position, item)
+
+            /*Toast.makeText(viewHolder.context, viewHolder.context.getString(R.string.toast_url_saved_to_clipboard), Toast.LENGTH_SHORT).show()
             viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
             val clip = ClipData.newPlainText("img url", item.url)
-            (viewHolder.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)
+            (viewHolder.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)*/
             true
         }
         viewHolder.imgView.setOnClickListener {
@@ -115,9 +114,14 @@ class RecyclerViewAdapter :
         this.onClickListener = onClickListener
     }
 
+
+
+
     // onClickListener Interface
     interface OnDuckClickListener {
         fun onClick(position: Int, item: Item)
+
+        fun onLongClick(position: Int, item: Item)
 
         fun starDuck(item: Item, shouldStar: Boolean)
     }

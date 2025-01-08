@@ -34,10 +34,20 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:contentDescription="@string/new_duck"
-            android:src="@android:drawable/ic_menu_add"
-            app:fabSize="auto"
+            android:src="@drawable/rounded_add_2_24"
+            app:fabSize="normal"
+            app:shapeAppearanceOverlay="@style/CustomFab"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/compose_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
