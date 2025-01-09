@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         bottomNavigationView.setupWithNavController(navController)
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.grid, R.id.liked)
+            setOf(R.id.grid, R.id.liked, R.id.add_image)
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
 

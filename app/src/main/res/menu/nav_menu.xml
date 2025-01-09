@@ -11,4 +11,11 @@
         android:icon="@drawable/ic_star_on"
         android:iconTint="@color/black"
         android:title="@string/liked" />
+
+    <item
+        android:splitMotionEvents="false"
+        android:id="@+id/add_image"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:iconTint="@color/black"
+        android:title="Add Image" />
 </menu>

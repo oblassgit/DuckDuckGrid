@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_GridFragment_to_likedFragment"
             app:destination="@id/LikedFragment" />
+        <action
+            android:id="@+id/action_GridFragment_to_AddImageFragment"
+            app:destination="@id/AddImageFragment" />
     </fragment>
 
     <fragment

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_LikedFragment_to_SingleImageFragment"
             app:destination="@id/SingleImageFragment" />
+        <action
+            android:id="@+id/action_LikedFragment_to_AddImageFragment"
+            app:destination="@id/AddImageFragment" />
     </fragment>
 
 
@@ -41,6 +44,9 @@
         <action
             android:id="@+id/action_SingleImageFragment_to_likedFragment"
             app:destination="@id/LikedFragment" />
+        <action
+            android:id="@+id/action_SingleImageFragment_to_AddImageFragment"
+            app:destination="@id/AddImageFragment" />
     </fragment>
 
 </navigation>
