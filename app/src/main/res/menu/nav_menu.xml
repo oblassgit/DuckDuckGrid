@@ -15,7 +15,7 @@
     <item
         android:splitMotionEvents="false"
         android:id="@+id/add_image"
-        android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/round_photo_camera_24"
         android:iconTint="@color/black"
-        android:title="Add Image" />
+        android:title="@string/add_image" />
 </menu>

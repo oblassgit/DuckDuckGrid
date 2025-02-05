@@ -22,10 +22,12 @@ class AddImageFragment: Fragment() {
 
         binding.addPhotoComposeView.setContent {
             context?.let {
-                CameraPreviewScreen(
-                    Modifier, CameraPreviewViewModel(),
-                    context = it
-                )
+                activity?.let { it1 -> CameraPreviewViewModel(it1.application) }?.let { it2 ->
+                    CameraPreviewScreen(
+                        Modifier, it2,
+                        context = it
+                    )
+                }
             }
         }
         return _binding.root.rootView

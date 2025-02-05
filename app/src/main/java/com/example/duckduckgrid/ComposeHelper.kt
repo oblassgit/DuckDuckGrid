@@ -38,10 +38,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -64,7 +66,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -200,6 +201,7 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier, viewModel: CameraPreviewV
     val imagePermissionState = rememberPermissionState(android.Manifest.permission.READ_MEDIA_IMAGES)
     val scope = rememberCoroutineScope()
 
+
     AppTheme {
 
         if (cameraPermissionState.status.isGranted) {
@@ -229,6 +231,14 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier, viewModel: CameraPreviewV
 
                     }, icon = {Icon(Icons.Rounded.Add, "FAB")}, text = { Text("Pick from Gallery")}, modifier = Modifier.wrapContentSize()
                         .padding(vertical = 30.dp, horizontal = 8.dp))
+                }
+
+                Box(Modifier.align(Alignment.BottomCenter)) {
+
+                    Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        FlipCameraButton(viewModel)
+                        CaptureButton(viewModel)
+                    }
                 }
 
             }
@@ -267,9 +277,8 @@ fun CameraPreviewContent(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
     val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     LaunchedEffect(lifecycleOwner) {
-        viewModel.bindToCamera(context.applicationContext, lifecycleOwner)
+        viewModel.bindToCamera(lifecycleOwner)
     }
 
     var autofocusRequest by remember { mutableStateOf(UUID.randomUUID() to Offset.Unspecified) }
@@ -317,7 +326,7 @@ fun CameraPreviewContent(
     }
 }
 
-private fun saveImage(bitmap: Bitmap, context: Context): Uri? {
+fun saveImage(bitmap: Bitmap, context: Context): Uri? {
     //TODO - Should be processed in another thread
     val imagesFolder = File(context.filesDir, "images")
 
@@ -378,6 +387,36 @@ suspend fun getImagesFromGallery(contentResolver: ContentResolver): List<Media> 
     }
 
     return@withContext images
+}
+
+@Composable
+fun CaptureButton(viewModel: CameraPreviewViewModel) {
+
+
+    Box {
+        FloatingActionButton(
+            onClick = {
+
+                viewModel.captureImage()
+            },
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Icon(Icons.Rounded.Share, "Share")
+        }
+
+    }
+
+}
+
+@Composable
+fun FlipCameraButton(viewModel: CameraPreviewViewModel) {
+    var lifecycleOwner = LocalLifecycleOwner.current
+    Button(onClick = {
+        viewModel.flipCamera(lifecycleOwner)
+    }) {
+        Icon(Icons.Rounded.Refresh, "flip camera")
+    }
 }
 
 data class Media(
