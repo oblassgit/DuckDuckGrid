@@ -29,13 +29,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Refresh
@@ -47,12 +51,17 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -67,8 +76,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.core.content.ContextCompat.startActivity
@@ -218,7 +229,10 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier, viewModel: CameraPreviewV
                 }
 
                 CameraPreviewContent(viewModel, modifier)
-                Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start) {
+
+                //Add from gallery button
+
+                /*Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start) {
                     ExtendedFloatingActionButton ( onClick = {
 
                         if(imagePermissionState.status.isGranted) {
@@ -231,13 +245,18 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier, viewModel: CameraPreviewV
 
                     }, icon = {Icon(Icons.Rounded.Add, "FAB")}, text = { Text("Pick from Gallery")}, modifier = Modifier.wrapContentSize()
                         .padding(vertical = 30.dp, horizontal = 8.dp))
-                }
+                }*/
 
                 Box(Modifier.align(Alignment.BottomCenter)) {
 
-                    Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        FlipCameraButton(viewModel)
-                        CaptureButton(viewModel)
+                    Column {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+
+                            FlipCameraButton(viewModel)
+                            CaptureButton(viewModel, Modifier.weight(3f, true))
+                        }
+                        ZoomButtons(viewModel)
+
                     }
                 }
 
@@ -277,6 +296,9 @@ fun CameraPreviewContent(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 ) {
     val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
+
+    val detectedObjects by viewModel.detectedObjects.collectAsState()
+
     LaunchedEffect(lifecycleOwner) {
         viewModel.bindToCamera(lifecycleOwner)
     }
@@ -312,6 +334,18 @@ fun CameraPreviewContent(
                 }
             }
         )
+
+        detectedObjects.forEach { obj ->
+            Log.d("detected objects", obj.toString())
+            Box(
+                Modifier
+                    .offset { IntOffset(obj.boundingBox.left, obj.boundingBox.top) }
+                    .size(obj.boundingBox.width().dp, obj.boundingBox.height().dp)
+                    .border(2.dp, Color.Red, shape = RoundedCornerShape(4.dp))
+            ) {
+                Text(obj.label, color = Color.White, modifier = Modifier.padding(4.dp))
+            }
+        }
 
         AnimatedVisibility(
             visible = showAutofocusIndicator,
@@ -390,7 +424,7 @@ suspend fun getImagesFromGallery(contentResolver: ContentResolver): List<Media> 
 }
 
 @Composable
-fun CaptureButton(viewModel: CameraPreviewViewModel) {
+fun CaptureButton(viewModel: CameraPreviewViewModel, modifier: Modifier = Modifier) {
 
 
     Box {
@@ -411,11 +445,39 @@ fun CaptureButton(viewModel: CameraPreviewViewModel) {
 
 @Composable
 fun FlipCameraButton(viewModel: CameraPreviewViewModel) {
-    var lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     Button(onClick = {
         viewModel.flipCamera(lifecycleOwner)
     }) {
         Icon(Icons.Rounded.Refresh, "flip camera")
+    }
+}
+
+@Composable
+fun ZoomButtons(viewModel: CameraPreviewViewModel, modifier: Modifier = Modifier) {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val options = listOf("1x", "2x", "3x")
+
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = { selectedIndex = index
+
+                          when(selectedIndex) {
+                              0 -> viewModel.setZoomLevel(0f)
+                              1 -> viewModel.setZoomLevel(0.5f)
+                              2 -> viewModel.setZoomLevel(1f)
+                          }
+
+                          },
+                selected = index == selectedIndex,
+                label = { Text(label) }
+            )
+        }
     }
 }
 
