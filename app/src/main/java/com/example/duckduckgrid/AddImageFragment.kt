@@ -20,13 +20,17 @@ class AddImageFragment: Fragment() {
         _binding = FragmentAddImageBinding.inflate(inflater, container, false)
 
 
+
         binding.addPhotoComposeView.setContent {
             context?.let {
                 activity?.let { it1 -> CameraPreviewViewModel(it1.application) }?.let { it2 ->
-                    CameraPreviewScreen(
-                        Modifier, it2,
-                        context = it
-                    )
+
+
+                        CameraPreviewScreen(
+                            Modifier, it2,
+                            context = it
+                        )
+
                 }
             }
         }

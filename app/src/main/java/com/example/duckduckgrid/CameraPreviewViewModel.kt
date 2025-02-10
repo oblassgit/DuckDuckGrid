@@ -28,9 +28,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.objects.ObjectDetection
-import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
+import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-
 
 class CameraPreviewViewModel(application: Application) : AndroidViewModel(application) {
     // Used to set up a link between the Camera and your UI.
@@ -55,27 +55,29 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
     private val _detectedObjects = MutableStateFlow<List<DetectedObjectData>>(emptyList())
     val detectedObjects: StateFlow<List<DetectedObjectData>> = _detectedObjects
 
+    private val classLabels = loadLabelsFromAssets()
 
-    /*val localModel = LocalModel.Builder()
-        .setAssetFilePath("model.tflite")
+
+    val localModel = LocalModel.Builder()
+        .setAssetFilePath("refined_quantisized_model.tflite")
         .build()
 
     val objectDetectorOptions = CustomObjectDetectorOptions.Builder(localModel)
         .setDetectorMode(CustomObjectDetectorOptions.STREAM_MODE)
         .enableClassification()
         .setClassificationConfidenceThreshold(0.5f)
-        .setMaxPerObjectLabelCount(3)
+        .setMaxPerObjectLabelCount(1)
         .build()
 
-    val objectDetector = ObjectDetection.getClient(objectDetectorOptions)*/
+    val objectDetector = ObjectDetection.getClient(objectDetectorOptions)
 
-    val objectDetectorOptions = ObjectDetectorOptions.Builder()
+    /*val objectDetectorOptions = ObjectDetectorOptions.Builder()
         .setDetectorMode(ObjectDetectorOptions.STREAM_MODE)
         .enableMultipleObjects()
         .enableClassification()
         .build()
 
-    val objectDetector = ObjectDetection.getClient(objectDetectorOptions)
+    val objectDetector = ObjectDetection.getClient(objectDetectorOptions)*/
 
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
@@ -201,28 +203,62 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
 
                 val filteredObjects: MutableList<DetectedObjectData> = ArrayList()
                 for (detectedObject in objects) {
-                    val confidence = detectedObject.trackingId!!.toFloat() // Get the confidence score
-                    for(label in detectedObject.labels) {
-                        Log.d("labels", label.text + "\nconfidence: " + confidence)
-                    }
-                    if (detectedObject.labels.firstOrNull() != null) { // Adjust threshold as needed
-                        filteredObjects.add(DetectedObjectData(detectedObject.boundingBox, detectedObject.labels.first().text))
+                    // Get the confidence score
+
+                    for (label in detectedObject.labels) {
+                        var labelText = label.text
+                        Log.d("labels", "Label: $labelText | Confidence: ${label.confidence} | ${label.index}")
+
+
+                        // If label text is empty, map it manually using predefined labels
+                        if (labelText.isEmpty()) {
+                            // Assuming detectedObject.trackingId is the class index (it may not always be, check your model output format)
+                            var classIndex = 1
+                            if((label.index ?: 1) <= 1) {
+                                classIndex = label.index ?: -1
+                            }
+                            if (classIndex >= 0 && classIndex < classLabels.size) {
+                                labelText = classLabels[classIndex]
+                            }
+                        }
+
+                        Log.d("labels", "Label: $labelText | Confidence: ${detectedObject.labels.first().confidence} | ${detectedObject.labels.first().index}")
+                        filteredObjects.add(
+                            DetectedObjectData(
+                                boundingBox = detectedObject.boundingBox,
+                                label = labelText
+                            )
+                        )
                     }
                 }
 
+                // Update detected objects with the new list of objects with labels and bounding boxes
                 _detectedObjects.value = filteredObjects
-                /*_detectedObjects.value = objects.map { obj ->
-                    DetectedObjectData(obj.boundingBox, obj.labels.firstOrNull()?.text ?: "Unknown")
-                }*/
             }
             .addOnFailureListener { e ->
                 Log.e("MLKit", "Detection error: ${e.message}")
             }
             .addOnCompleteListener {
                 imageProxy.close()
-                Log.d("MLKit", "analyzeImage completed")
             }
     }
+
+
+    private fun loadLabelsFromAssets(): List<String> {
+        val labels = mutableListOf<String>()
+        try {
+            val inputStream = context.assets.open("labels.txt")
+            inputStream.bufferedReader().useLines { lines ->
+                lines.forEach { line ->
+                    labels.add(line.trim()) // Add each line (label) to the list
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MLKit", "Error loading labels: ${e.message}")
+        }
+        return labels
+    }
+
 }
 
 data class DetectedObjectData(val boundingBox: Rect, val label: String)

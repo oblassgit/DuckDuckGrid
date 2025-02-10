@@ -1,0 +1,2 @@
+Duck
+not Duck
