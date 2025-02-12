@@ -54,7 +54,7 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
 
 
     private suspend fun fetchRandomUrl(callback: (() -> Unit), item: Item) {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             item.url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"")[0]
             item.date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
@@ -80,12 +80,14 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
         callback()
     }
 
-    suspend fun addItem() {
+    fun addItem() {
         val item = Item()
-        withContext(Dispatchers.Main) {
+        launch {
             fetchRandomUrl(callback, item)
-            _itemList.value = listOf(item) + (_itemList.value ?: emptyList())
         }
+
+        _itemList.postValue(listOf(item) + (_itemList.value ?: emptyList()))
+
     }
 
     fun starItem(itemUrl: String, shouldStar: Boolean) {

@@ -335,10 +335,9 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            launch {
-                viewModel.addItem()
-                recyclerViewAdapter.notifyItemInserted(0)
-            }
+            viewModel.addItem()
+            recyclerViewAdapter.notifyItemInserted(0)
+
         }
 
     }
