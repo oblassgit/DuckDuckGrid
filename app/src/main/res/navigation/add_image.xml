@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/AddImageFragment"
-        android:name="com.example.duckduckgrid.AddImageFragment"
+        android:name="com.example.duckduckgrid.fragments.AddImageFragment"
         android:label="Add Image"
         tools:layout="@layout/fragment_add_image" >
         <action

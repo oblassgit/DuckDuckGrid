@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.Fragment
+import com.example.duckduckgrid.compose.CameraPreviewScreen
+import com.example.duckduckgrid.viewmodels.CameraPreviewViewModel
 import com.example.duckduckgrid.databinding.FragmentAddImageBinding
 
 class AddImageFragment: Fragment() {

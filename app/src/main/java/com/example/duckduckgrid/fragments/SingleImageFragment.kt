@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,6 +16,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.example.duckduckgrid.DuckRepository
+import com.example.duckduckgrid.R
 import com.example.duckduckgrid.databinding.FragmentSingleImageBinding
 import com.github.amlcurran.showcaseview.ShowcaseView
 import com.github.amlcurran.showcaseview.targets.ViewTarget

@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,6 +22,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.duckduckgrid.DuckRepository
+import com.example.duckduckgrid.viewmodels.GridFragmentViewModel
+import com.example.duckduckgrid.viewmodels.Item
+import com.example.duckduckgrid.adapters.RecyclerViewAdapter
+import com.example.duckduckgrid.ViewMode
+import com.example.duckduckgrid.compose.bottomSheet
 import com.example.duckduckgrid.databinding.FragmentGridBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +35,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.net.URL
+
 
 class GridFragment : Fragment(), CoroutineScope by MainScope() {
 
@@ -264,6 +271,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
+        viewModel.startPolling(30000) // every 30 seconds
+
         return binding.root
     }
 
@@ -288,8 +297,8 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
     }
 
     private fun isNetworkAvailable(): Boolean {
-        val conectivityManager: ConnectivityManager = context?.getSystemService()!!
-        return conectivityManager.getNetworkCapabilities(conectivityManager.activeNetwork)
+        val connectivityManager: ConnectivityManager = context?.getSystemService()!!
+        return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             .isNetworkCapabilitiesValid()
     }
 

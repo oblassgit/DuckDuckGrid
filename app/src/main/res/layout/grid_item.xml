@@ -6,7 +6,7 @@
         <import
             type="android.view.View"
             alias="View" />
-        <variable name="item" type="com.example.duckduckgrid.Item"/>
+        <variable name="item" type="com.example.duckduckgrid.viewmodels.Item"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,6 +15,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.duckduckgrid.DuckRepository
+import com.example.duckduckgrid.viewmodels.Item
+import com.example.duckduckgrid.viewmodels.LikedFragmentViewModel
+import com.example.duckduckgrid.adapters.RecyclerViewAdapter
+import com.example.duckduckgrid.ViewMode
+import com.example.duckduckgrid.compose.bottomSheet
 import com.example.duckduckgrid.databinding.FragmentLikedBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope

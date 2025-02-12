@@ -1,8 +1,9 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.duckduckgrid.DuckRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

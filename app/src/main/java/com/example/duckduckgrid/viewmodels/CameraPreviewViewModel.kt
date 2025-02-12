@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.viewmodels
 
 import android.app.Application
 import android.content.Intent

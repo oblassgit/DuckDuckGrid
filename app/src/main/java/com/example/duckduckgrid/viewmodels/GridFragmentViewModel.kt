@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.viewmodels
 
 import android.os.Parcelable
 import android.util.Log
@@ -7,7 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
@@ -47,9 +50,11 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
         )
     }
 
+    private var pollingJob: Job? = null
+
 
     private suspend fun fetchRandomUrl(callback: (() -> Unit), item: Item) {
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             item.url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"")[0]
             item.date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
@@ -79,8 +84,8 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
         val item = Item()
         launch {
             fetchRandomUrl(callback, item)
+            _itemList.value?.add(0, item)
         }
-        _itemList.value?.add(0, item)
     }
 
     fun starItem(itemUrl: String, shouldStar: Boolean) {
@@ -90,5 +95,27 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
             it.first { item -> item.url == itemUrl }.liked = shouldStar
             _itemList.postValue(it)
         }
+    }
+
+    fun startPolling(intervalMillis: Long) {
+        pollingJob = CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                try {
+                    addItem()
+                } catch (e: Exception) {
+                    Log.e("Polling", "Error fetching data: ${e.message}")
+                }
+                delay(intervalMillis) // Wait before the next API call
+            }
+        }
+    }
+
+    fun cancelPolling() {
+        pollingJob?.cancel()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelPolling()
     }
 }

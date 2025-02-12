@@ -1,4 +1,4 @@
-package com.example.duckduckgrid
+package com.example.duckduckgrid.adapters
 
 import android.content.Context
 import android.view.HapticFeedbackConstants
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.duckduckgrid.databinding.GridItemBinding
+import com.example.duckduckgrid.viewmodels.Item
 
 
 class RecyclerViewAdapter :
