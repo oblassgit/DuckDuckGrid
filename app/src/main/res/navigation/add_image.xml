@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_image"
+    app:startDestination="@+id/AddImageFragment">
+
+    <fragment
+        android:id="@+id/AddImageFragment"
+        android:name="com.example.duckduckgrid.fragments.AddImageFragment"
+        android:label="Add Image"
+        tools:layout="@layout/fragment_add_image" >
+        <action
+            android:id="@+id/action_AddImageFragment_to_GridFragment"
+            app:destination="@id/GridFragment" />
+        <action
+            android:id="@+id/action_AddImageFragment_to_LikedFragment"
+            app:destination="@id/LikedFragment" />
+        <!--<action
+            android:id="@+id/action_AddImageFragment_to_SingleImageFragment"
+            app:destination="@id/SingleImageFragment" />-->
+    </fragment>
+
+</navigation>

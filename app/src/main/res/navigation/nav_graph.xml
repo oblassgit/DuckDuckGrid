@@ -6,6 +6,7 @@
 
     <include app:graph="@navigation/grid"/>
     <include app:graph="@navigation/liked"/>
+    <include app:graph="@navigation/add_image"/>
 
 
 

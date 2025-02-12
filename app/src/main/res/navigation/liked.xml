@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/LikedFragment"
-        android:name="com.example.duckduckgrid.LikedFragment"
+        android:name="com.example.duckduckgrid.fragments.LikedFragment"
         android:label="Duck Duck Liked"
         tools:layout="@layout/fragment_liked" >
         <action
@@ -16,12 +16,15 @@
         <action
             android:id="@+id/action_LikedFragment_to_SingleImageFragment"
             app:destination="@id/SingleImageFragment" />
+        <action
+            android:id="@+id/action_LikedFragment_to_AddImageFragment"
+            app:destination="@id/AddImageFragment" />
     </fragment>
 
 
     <fragment
         android:id="@+id/SingleImageFragment"
-        android:name="com.example.duckduckgrid.SingleImageFragment"
+        android:name="com.example.duckduckgrid.fragments.SingleImageFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_single_image">
 
@@ -37,10 +40,13 @@
             app:argType="string" />
         <argument
             android:name="item"
-            app:argType="com.example.duckduckgrid.Item" />
+            app:argType="com.example.duckduckgrid.viewmodels.Item" />
         <action
             android:id="@+id/action_SingleImageFragment_to_likedFragment"
             app:destination="@id/LikedFragment" />
+        <action
+            android:id="@+id/action_SingleImageFragment_to_AddImageFragment"
+            app:destination="@id/AddImageFragment" />
     </fragment>
 
 </navigation>
