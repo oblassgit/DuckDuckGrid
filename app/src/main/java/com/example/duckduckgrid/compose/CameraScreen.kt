@@ -52,6 +52,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.takeOrElse
@@ -120,10 +121,11 @@ fun CameraPreviewScreen(modifier: Modifier = Modifier, viewModel: CameraPreviewV
                 Box(Modifier.align(Alignment.BottomCenter)) {
 
                     Column {
-                        Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-
+                        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                             FlipCameraButton(viewModel)
-                            CaptureButton(viewModel, Modifier.weight(3f, true))
+                            Spacer(Modifier)
+                            CaptureButton(viewModel)
+                            Spacer(Modifier)
                         }
                         ZoomButtons(viewModel)
 
@@ -232,16 +234,18 @@ fun CameraPreviewContent(
 
 @Composable
 fun CaptureButton(viewModel: CameraPreviewViewModel, modifier: Modifier = Modifier) {
+    val isDuckDetected by viewModel.isDuckDetected.collectAsState()
 
 
     Box {
         FloatingActionButton(
             onClick = {
+                if (isDuckDetected) {
+                    viewModel.captureImage()
 
-                viewModel.captureImage()
+                }
             },
-            modifier = Modifier
-                .padding(16.dp)
+            modifier = modifier.padding(16.dp).alpha(if(isDuckDetected) 1f else 0.5f)
         ) {
             Icon(Icons.Rounded.Share, "Share")
         }

@@ -30,10 +30,10 @@ data class Item(
 
 class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
 
-    private val _itemList = MutableLiveData<MutableList<Item>>()
-
-    val itemList: LiveData<MutableList<Item>>
+    private val _itemList = MutableLiveData<List<Item>>()
+    val itemList: LiveData<List<Item>>
         get() = _itemList
+
 
     fun initItems() {
         _itemList.value = mutableListOf(
@@ -54,7 +54,7 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
 
 
     private suspend fun fetchRandomUrl(callback: (() -> Unit), item: Item) {
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val res = URL("https://random-d.uk/api/v2/random").readText()
             item.url = res.split(":", limit = 3)[2].removePrefix("\"").split("\"")[0]
             item.date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")).toString()
@@ -80,11 +80,11 @@ class GridFragmentViewModel : ViewModel(), CoroutineScope by MainScope() {
         callback()
     }
 
-    fun addItem() {
+    suspend fun addItem() {
         val item = Item()
-        launch {
+        withContext(Dispatchers.Main) {
             fetchRandomUrl(callback, item)
-            _itemList.value?.add(0, item)
+            _itemList.value = listOf(item) + (_itemList.value ?: emptyList())
         }
     }
 

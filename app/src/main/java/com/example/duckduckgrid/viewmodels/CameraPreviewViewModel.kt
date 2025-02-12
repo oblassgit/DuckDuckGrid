@@ -55,6 +55,9 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
     private val _detectedObjects = MutableStateFlow<List<DetectedObjectData>>(emptyList())
     val detectedObjects: StateFlow<List<DetectedObjectData>> = _detectedObjects
 
+    private val _isDuckDetected = MutableStateFlow(false)
+    val isDuckDetected: StateFlow<Boolean> = _isDuckDetected
+
     private val classLabels = loadLabelsFromAssets()
 
 
@@ -202,6 +205,8 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
                 Log.d("MLKit", "Detected ${objects.size} objects")
 
                 val filteredObjects: MutableList<DetectedObjectData> = ArrayList()
+                var duckDetected = false
+
                 for (detectedObject in objects) {
                     // Get the confidence score
 
@@ -222,6 +227,10 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
                             }
                         }
 
+                        if(labelText.equals("duck", ignoreCase = true)) {
+                            duckDetected = true
+                        }
+
                         Log.d("labels", "Label: $labelText | Confidence: ${detectedObject.labels.first().confidence} | ${detectedObject.labels.first().index}")
                         filteredObjects.add(
                             DetectedObjectData(
@@ -229,6 +238,7 @@ class CameraPreviewViewModel(application: Application) : AndroidViewModel(applic
                                 label = labelText
                             )
                         )
+                        _isDuckDetected.value = duckDetected
                     }
                 }
 

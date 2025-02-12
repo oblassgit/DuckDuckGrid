@@ -92,6 +92,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview-android:1.7.5'
     implementation 'androidx.camera:camera-lifecycle:1.4.1'
     implementation 'androidx.test.services:storage:1.4.2'
+    implementation 'androidx.compose.foundation:foundation-layout-android:1.7.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation 'androidx.databinding:databinding-common:8.4.1'

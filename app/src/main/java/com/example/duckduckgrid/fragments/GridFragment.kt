@@ -271,7 +271,7 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
-        viewModel.startPolling(30000) // every 30 seconds
+        //viewModel.startPolling(30000) // every 30 seconds
 
         return binding.root
     }
@@ -335,8 +335,10 @@ class GridFragment : Fragment(), CoroutineScope by MainScope() {
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            viewModel.addItem()
-            recyclerViewAdapter.notifyItemInserted(0)
+            launch {
+                viewModel.addItem()
+                recyclerViewAdapter.notifyItemInserted(0)
+            }
         }
 
     }
